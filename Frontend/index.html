@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+
+  <!-- Responsividade -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Lixo Zero Angola</title>
+
+  <!-- CSS principal -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Biblioteca do mapa (Leaflet) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+</head>
+
+<body>
+
+<!-- ================= NAVBAR ================= -->
+<header>
+  <h2>LIXO ZERO ANGOLA</h2>
+
+  <!-- Menu de navegação -->
+  <nav>
+    <a href="index.html">Início</a>
+    <a href="reportar.html">Reportar</a>
+    <a href="empresas.html">Empresas</a>
+    <a href="login.html">Entrar</a>
+  </nav>
+</header>
+
+<!-- ================= HERO + MAPA ================= -->
+<section class="hero">
+
+  <!-- Texto principal -->
+  <div class="hero-text">
+    <h1>Encontre ou denuncie áreas com lixo</h1>
+    <p>Ajude a manter Angola limpa. Faça a diferença!</p>
+
+    <!-- Botão que leva para página de denúncia -->
+    <a href="reportar.html" class="btn">Reportar área com lixo</a>
+  </div>
+
+  <!-- Mapa -->
+  <div id="map"></div>
+
+</section>
+
+<!-- Scripts do mapa -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js">
+
+
+</script>
+
+<!-- JS personalizado -->
+<script src="script.js"></script>
+
+</body>
+</html>
