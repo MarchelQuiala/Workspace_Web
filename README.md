@@ -1,6 +1,6 @@
-# 🌍 Clean City
+# 🌍 SOS Lixo 
 
-O **Clean City** é uma plataforma colaborativa desenvolvida para ajudar no combate ao descarte irregular de lixo em Angola. O sistema permite que cidadãos denunciem áreas com lixo, enviem localização, fotos e descrições, enquanto empresas responsáveis pela recolha recebem notificações automáticas para agir rapidamente.
+O **SOS Lixo** é uma plataforma colaborativa desenvolvida para ajudar no combate ao descarte irregular de lixo em Angola. O sistema permite que cidadãos denunciem áreas com lixo, enviem localização, fotos e descrições, enquanto empresas responsáveis pela recolha recebem notificações automáticas para agir rapidamente.
 
 O principal objetivo do projeto é promover cidades mais limpas, sustentáveis e organizadas através da participação ativa da população e da tecnologia.
 
