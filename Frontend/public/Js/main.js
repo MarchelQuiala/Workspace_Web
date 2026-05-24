@@ -1,11 +1,7 @@
-// ==================== ARMAZENAMENTO GLOBAL ====================
-let ocorrencias = JSON.parse(localStorage.getItem('ocorrencias')) || [];
+// ==================== CONFIGURAÇÃO DA API LOCAL ====================
+const API_URL = 'http://localhost:3000/api/ocorrencias';
 
-function salvarOcorrenciasLocalStorage() {
-    localStorage.setItem('ocorrencias', JSON.stringify(ocorrencias));
-}
-
-// ==================== MODAL DE REPORTE ====================
+// ==================== MODAL DE REPORTE (INDEX.HTML) ====================
 function toggleModal(open) {
     const modal = document.getElementById('modalFormulario');
     if (!modal) return;
@@ -31,304 +27,280 @@ function buildMapLink(latitude, longitude) {
     return `https://www.google.com/maps?q=${encodeURIComponent(latitude + ',' + longitude)}`;
 }
 
-// GPS Telemóvel
 document.getElementById('btnCapturarGPS')?.addEventListener('click', () => {
     const geoStatus = document.getElementById('geoStatus');
     if (!geoStatus) return;
     geoStatus.innerHTML = "A solicitar autorização de GPS...";
     
     if (!navigator.geolocation) {
-        geoStatus.innerHTML = "<span style='color:red;'>O seu navegador não suporta geolocalização.</span>";
+        geoStatus.innerHTML = "<span style='color:var(--danger);'><i class='fa-solid fa-circle-xmark'></i> GPS não suportado.</span>";
         return;
     }
 
-    navigator.geolocation.getCurrentPosition(async (pos) => {
-        try {
-            const latitude = pos.coords.latitude.toFixed(6);
-            const longitude = pos.coords.longitude.toFixed(6);
-            geoStatus.innerHTML = "Coordenadas obtidas! Convertendo endereço...";
-            
-            const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${encodeURIComponent(latitude)}&lon=${encodeURIComponent(longitude)}&zoom=18`;
-            const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
-            
-            if (res.ok) {
-                const data = await res.json();
-                if (data && data.address) {
-                    const localidade = data.address.neighbourhood || data.address.suburb || data.address.road || '';
-                    const bairroInput = document.getElementById('bairro');
-                    if (bairroInput) bairroInput.value = localidade;
-                    
-                    const cidadeInfo = JSON.stringify(data.address).toLowerCase();
-                    const selectMunicipio = document.getElementById('municipio');
-                    if (cidadeInfo.includes('cazenga')) selectMunicipio.value = 'Cazenga';
-                    else if (cidadeInfo.includes('viana')) selectMunicipio.value = 'Viana';
-                    else if (cidadeInfo.includes('catete') || cidadeInfo.includes('icolo')) selectMunicipio.value = 'Catete';
-                    else if (cidadeInfo.includes('bom jesus')) selectMunicipio.value = 'Bom Jesus';
-                }
-            }
-            const mapLink = buildMapLink(latitude, longitude);
-            const mapInput = document.getElementById('googleMapsLink');
-            if (mapInput) mapInput.value = mapLink;
-            geoStatus.innerHTML = "<span style='color:green;'><i class='fa-solid fa-circle-check'></i> GPS capturado e campos preenchidos!</span>";
-        } catch(err) {
-            geoStatus.innerHTML = "<span style='color:orange;'>GPS obtido, erro ao traduzir o texto do endereço.</span>";
-        }
-    }, (err) => {
-        geoStatus.innerHTML = `<span style='color:red;'>Falha na leitura de satélite: ${err.message}</span>`;
-    }, { enableHighAccuracy: true, timeout: 8000 });
+    navigator.geolocation.getCurrentPosition(
+        (position) => {
+            const lat = position.coords.latitude.toFixed(6);
+            const lng = position.coords.longitude.toFixed(6);
+            const mapLinkInput = document.getElementById('googleMapsLink');
+            if (mapLinkInput) mapLinkInput.value = `https://maps.google.com/?q=${lat},${lng}`;
+            geoStatus.innerHTML = `<span style='color:var(--success);'><i class='fa-solid fa-circle-check'></i> Localização capturada!</span>`;
+        },
+        (error) => {
+            geoStatus.innerHTML = "<span style='color:var(--warning);'><i class='fa-solid fa-triangle-exclamation'></i> Erro ao obter GPS.</span>";
+        },
+        { enableHighAccuracy: true, timeout: 10000 }
+    );
 });
 
-// Busca manual de endereço
-document.getElementById('btnBuscarEndereco')?.addEventListener('click', async () => {
-    const geoStatus = document.getElementById('geoStatus');
-    const municipio = document.getElementById('municipio')?.value;
-    const bairro = document.getElementById('bairro')?.value.trim();
-    if (!bairro) {
-        if (geoStatus) geoStatus.innerHTML = "<span style='color:red;'>Escreva algo no campo Bairro/Rua para validarmos.</span>";
-        return;
-    }
-    if (geoStatus) geoStatus.innerHTML = "Pesquisando coordenadas geográficas...";
-    const queryCompleta = `${bairro}, ${municipio}, Luanda, Angola`;
-    try {
-        const url = `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(queryCompleta)}`;
-        const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
-        const data = await res.json();
-        if (data && data.length > 0) {
-            const mapLink = buildMapLink(data[0].lat, data[0].lon);
-            const mapInput = document.getElementById('googleMapsLink');
-            if (mapInput) mapInput.value = mapLink;
-            if (geoStatus) geoStatus.innerHTML = "<span style='color:green;'><i class='fa-solid fa-circle-check'></i> Endereço verificado e cadastrado!</span>";
-        } else {
-            const fallbackLink = `https://www.google.com/maps?q=${encodeURIComponent(bairro + ', ' + municipio + ', Luanda Angola')}`;
-            const mapInput = document.getElementById('googleMapsLink');
-            if (mapInput) mapInput.value = fallbackLink;
-            if (geoStatus) geoStatus.innerHTML = "<span style='color:orange;'><i class='fa-solid fa-triangle-exclamation'></i> Ponto gerado por aproximação de texto.</span>";
-        }
-    } catch {
-        const fallbackLink = `https://www.google.com/maps?q=${encodeURIComponent(bairro + ', ' + municipio + ', Luanda Angola')}`;
-        const mapInput = document.getElementById('googleMapsLink');
-        if (mapInput) mapInput.value = fallbackLink;
-        if (geoStatus) geoStatus.innerHTML = "<span style='color:orange;'>Link gerado via fallback paramétrico.</span>";
-    }
-});
-
-// ==================== SALVAR OCORRÊNCIA COM IMAGEM EM BASE64 ====================
-function salvarOcorrencia(event) {
+// ==================== SUBMISSÃO DO CIDADÃO PARA A API (POST) ====================
+async function salvarOcorrencia(event) {
     event.preventDefault();
-    const nome = document.getElementById('nomeUsuario')?.value;
-    const telefone = document.getElementById('telefoneUsuario')?.value;
-    const municipio = document.getElementById('municipio')?.value;
-    const bairro = document.getElementById('bairro')?.value;
-    const categoria = document.getElementById('categoria')?.value;
-    const prioridade = document.getElementById('prioridade')?.value;
-    const descricao = document.getElementById('descricao')?.value;
-    const fileInput = document.getElementById('imagemLocal');
-    let mapLink = document.getElementById('googleMapsLink')?.value;
-    if (!mapLink) mapLink = `https://www.google.com/maps?q=${encodeURIComponent(bairro + ', ' + municipio)}`;
 
-    // Função para adicionar ocorrência ao array e salvar
-    function adicionarOcorrencia(anexoUrl) {
-        const novaOcorrencia = {
-            id: Date.now(),
-            nome, telefone, municipio, bairro, categoria, prioridade, descricao,
-            status: 'pendente',
-            equipa: 'Não Atribuída',
-            anexoUrl: anexoUrl,
-            mapLink: mapLink,
-            data: new Date().toLocaleString()
-        };
-        ocorrencias.unshift(novaOcorrencia);
-        salvarOcorrenciasLocalStorage();
-        toggleModal(false);
-        alert('Ocorrência registada com sucesso!');
-        if (typeof atualizarPainelGeral === 'function') atualizarPainelGeral();
+    const descricao = document.getElementById('descricao')?.value;
+    const imagemLocalInput = document.getElementById('imagemLocal');
+    const mapLinkValue = document.getElementById('googleMapsLink')?.value;
+    const prioridade = document.getElementById('prioridade')?.value || 'media';
+    
+    let latitude = "-8.8368"; 
+    let longitude = "13.2343";
+
+    if (mapLinkValue && mapLinkValue.includes('q=')) {
+        const coords = mapLinkValue.split('q=')[1].split(',');
+        latitude = coords[0];
+        longitude = coords[1];
     }
 
-    // Se não houver imagem, salva placeholder
-    if (!fileInput || !fileInput.files.length) {
-        adicionarOcorrencia('https://via.placeholder.com/300?text=Sem+imagem');
+    const formData = new FormData();
+    formData.append('usuarioId', 'cidadao_luanda');
+    formData.append('descricao', descricao);
+    formData.append('latitude', latitude);
+    formData.append('longitude', longitude);
+    formData.append('prioridade', prioridade); 
+
+    if (imagemLocalInput && imagemLocalInput.files.length > 0) {
+        formData.append('midia', imagemLocalInput.files[0]);
+    } else {
+        alert("Por favor, selecione uma evidência física.");
         return;
     }
 
-    // Converte a imagem para Base64 e salva
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        adicionarOcorrencia(e.target.result);
-    };
-    reader.readAsDataURL(fileInput.files[0]);
-}
-
-// ==================== PAINEL ADMIN ====================
-const equipasDisponiveis = [
-    "Equipa Alfa - Viana",
-    "Brigada Saneamento 2",
-    "Icolo Ambiental Equipa 1",
-    "Icolo Ambiental Equipa 2",
-    "Cazenga Limpa R1"
-];
-
-function dispararAlertaInternoEmpresa(ocorrencia) {
-    const painelAlertas = document.getElementById('painelAlertas');
-    const textoAlerta = document.getElementById('textoAlerta');
-    if (!painelAlertas || !textoAlerta) return;
-    painelAlertas.style.background = "#FFEBEE";
-    painelAlertas.style.borderLeftColor = "#D32F2F";
-    textoAlerta.innerHTML = `<strong>STATUS ATUALIZADO!</strong> Ocorrência em ${ocorrencia.municipio} passou para ${ocorrencia.status}. Equipa: ${ocorrencia.equipa}.`;
-    setTimeout(() => {
-        painelAlertas.style.background = "#FFF3E0";
-        painelAlertas.style.borderLeftColor = "#FF9800";
-        textoAlerta.innerHTML = "Nenhum alerta recente pendente. As empresas parceiras operam na normalidade geográfica configurada.";
-    }, 5000);
-}
-
-function atualizarPainelGeral() {
-    const filtroMun = document.getElementById('filtroMunicipio')?.value || 'todos';
-    const filtroPrio = document.getElementById('filtroPrioridade')?.value || 'todos';
-    const filtroCat = document.getElementById('filtroCategoria')?.value || 'todos';
-    const cardsContainer = document.getElementById('containerCardsOcorrencias');
-    if (!cardsContainer) return;
-
-    cardsContainer.innerHTML = '';
-    let resolvidos = 0;
-    let filtradosCount = 0;
-
-    ocorrencias.forEach(o => {
-        const matchMun = filtroMun === 'todos' || o.municipio === filtroMun;
-        const matchPrio = filtroPrio === 'todos' || o.prioridade === filtroPrio;
-        const matchCat = filtroCat === 'todos' || o.categoria === filtroCat;
-        if (matchMun && matchPrio && matchCat) {
-            filtradosCount++;
-            if (o.status === 'resolvido') resolvidos++;
-
-            const card = document.createElement('div');
-            card.className = `occurrence-card prio-${o.prioridade}`;
-            card.innerHTML = `
-                <div class="card-img-box">
-                    <img src="${o.anexoUrl}" alt="Evidência">
-                    <span class="card-status-badge ${o.status}">${o.status.toUpperCase()}</span>
-                </div>
-                <div class="card-body">
-                    <div class="card-header-info">
-                        <span class="card-category-tag">${o.categoria}</span>
-                        <span class="card-prio-tag">${o.prioridade.toUpperCase()}</span>
-                    </div>
-                    <p class="card-desc">${o.descricao}</p>
-                    <div class="card-meta-line">
-                        <i class="fa-solid fa-location-dot"></i>
-                        <a href="${o.mapLink}" target="_blank">${o.municipio} - ${o.bairro}</a>
-                    </div>
-                    <div class="card-meta-line">
-                        <i class="fa-solid fa-user"></i> ${o.nome} (${o.telefone})
-                    </div>
-                    <div class="card-action-zone">
-                        <div class="select-wrapper">
-                            <label>Equipa:</label>
-                            <select class="card-team-selector" onchange="mudarEquipaElemento(${o.id}, this.value)">
-                                <option ${o.equipa === 'Não Atribuída' ? 'selected' : ''}>Não Atribuída</option>
-                                ${equipasDisponiveis.map(e => `<option value="${e}" ${o.equipa === e ? 'selected' : ''}>${e}</option>`).join('')}
-                            </select>
-                        </div>
-                        <div class="card-btn-holder">
-                            ${o.status !== 'resolvido' 
-                                ? `<button class="btn-card-action" onclick="avancarStatusElemento(${o.id})">Avançar</button>` 
-                                : `<span class="success-check"><i class="fa-solid fa-check-circle"></i> Concluído</span>`}
-                        </div>
-                    </div>
-                </div>
-            `;
-            cardsContainer.appendChild(card);
+    try {
+        const btnSalvar = document.querySelector('.btn-salvar');
+        if (btnSalvar) {
+            btnSalvar.disabled = true;
+            btnSalvar.innerText = "A enviar para a Nuvem...";
         }
+
+        const resposta = await fetch(API_URL, {
+            method: 'POST',
+            body: formData
+        });
+
+        if (resposta.ok) {
+            alert("Ocorrência enviada para o Firebase com sucesso!");
+            toggleModal(false);
+            if (document.getElementById('containerCardsOcorrencias')) {
+                atualizarPainelGeral();
+            } else {
+                window.location.reload();
+            }
+        } else {
+            const err = await resposta.json();
+            alert("Erro do servidor: " + err.error);
+        }
+    } catch (erro) {
+        console.error(erro);
+        alert("Erro ao conectar ao Back-end.");
+    } finally {
+        const btnSalvar = document.querySelector('.btn-salvar');
+        if (btnSalvar) {
+            btnSalvar.disabled = false;
+            btnSalvar.innerText = "Submeter Ocorrência";
+        }
+    }
+}
+
+// ==================== LEITURA E RENDERIZAÇÃO REAL DO REPORTADM ====================
+async function atualizarPainelGeral() {
+    const container = document.getElementById('containerCardsOcorrencias');
+    if (!container) return;
+
+    try {
+        const resposta = await fetch(API_URL);
+        const ocorrenciasAPI = await resposta.json();
+
+        // Armazena no escopo global para uso nos filtros
+        window.todasOcorrencias = ocorrenciasAPI;
+
+        renderizarCardsPainel(ocorrenciasAPI);
+        atualizarContadoresPainel(ocorrenciasAPI);
+
+    } catch (erro) {
+        console.error("Erro na leitura da API:", erro);
+        container.innerHTML = "<p style='padding:20px; color:var(--prio-alta);'>Erro ao carregar dados do servidor Node.js.</p>";
+    }
+}
+
+// INJEÇÃO QUE REPRODUZ 100% O DESIGN ORIGINAL DOS TEUS COLEGAS
+function renderizarCardsPainel(lista) {
+    const container = document.getElementById('containerCardsOcorrencias');
+    if (!container) return;
+    container.innerHTML = "";
+
+    if (lista.length === 0) {
+        container.innerHTML = "<p style='padding: 20px; color: var(--text-muted); text-align:center; width:100%;'>Nenhuma ocorrência encontrada.</p>";
+        return;
+    }
+
+    lista.forEach(item => {
+        const card = document.createElement('div');
+        // Mantém a classe dinâmica original que muda a cor da borda esquerda baseado no status
+        card.className = `mockup-card card-${item.status.replace(/\s+/g, '').toLowerCase()}`;
+        
+        // Define a label e a classe CSS correta para a prioridade (Alta, Media, Baixa)
+        const prioridadeFixa = item.prioridade || 'media';
+        const labelPrioridade = prioridadeFixa.charAt(0).toUpperCase() + prioridadeFixa.slice(1);
+
+        // Renderização de mídia inteligente (Vídeo ou Imagem vinda do Firebase Storage)
+        let midiaHTML = "";
+        if (item.url_foto) {
+            if (item.url_foto.includes('.mp4') || item.url_foto.includes('.mov')) {
+                midiaHTML = `<video src="${item.url_foto}" controls class="card-image" style="object-fit: cover; max-height: 200px; width: 100%; border-radius: 8px;"></video>`;
+            } else {
+                midiaHTML = `<img src="${item.url_foto}" alt="Evidência" class="card-image" style="object-fit: cover; max-height: 200px; width: 100%; border-radius: 8px; ">`;
+            }
+        }
+
+        // MONTAGEM DO HTML IDENTICO AO ORIGINAL (ANTES DO BUG)
+        card.innerHTML = `
+            <div class="card-header">
+                <span class="status-badge status-${item.status.replace(/\s+/g, '').toLowerCase()}">${item.status}</span>
+                <span class="priority-badge prio-${prioridadeFixa}">${labelPrioridade}</span>
+            </div>
+            
+            <p class="card-desc">${item.descricao}</p>
+            
+            <div class="card-meta">
+                <span><i class="fa-solid fa-location-dot"></i> Lat: ${item.latitude} | Lng: ${item.longitude}</span>
+                <span><i class="fa-solid fa-calendar-days"></i> ${item.data_criacao ? new Date(item.data_criacao).toLocaleDateString('pt-AO') : 'Recente'}</span>
+            </div>
+
+            ${midiaHTML}
+
+            <div class="card-actions">
+                <div class="team-select-box">
+                    <select id="select-equipe-${item.id}">
+                        <option value="Brigada A - Maianga" ${item.equipa === 'Brigada A - Maianga' ? 'selected' : ''}>Brigada A - Maianga</option>
+                        <option value="Brigada B - Samba" ${item.equipa === 'Brigada B - Samba' ? 'selected' : ''}>Brigada B - Samba</option>
+                        <option value="Brigada C - Rangel" ${item.equipa === 'Brigada C - Rangel' ? 'selected' : ''}>Brigada C - Rangel</option>
+                        <option value="Equipa de Choque" ${item.equipa === 'Equipa de Choque' ? 'selected' : ''}>Equipa de Choque</option>
+                    </select>
+                    <button class="btn-action btn-team" onclick="mudarEquipaElemento('${item.id}')">
+                        <i class="fa-solid fa-truck-field"></i> Mudar Equipa
+                    </button>
+                </div>
+                
+                ${item.status !== 'Resolvido' ? `
+                    <button class="btn-action btn-status" onclick="avancarStatusElemento('${item.id}', '${item.status}')">
+                        <i class="fa-solid fa-check"></i> Avançar Estado
+                    </button>
+                ` : ''}
+            </div>
+        `;
+        container.appendChild(card);
     });
-
-    const totalEl = document.getElementById('totalPontos');
-    const taxaEl = document.getElementById('taxaResolucao');
-    if (totalEl) totalEl.innerText = `${filtradosCount} Ponto(s)`;
-    const taxa = filtradosCount > 0 ? ((resolvidos / filtradosCount) * 100).toFixed(1) : 0;
-    if (taxaEl) taxaEl.innerText = `${taxa}%`;
 }
 
-function filtrarOcorrencias() {
-    atualizarPainelGeral();
+// ==================== CONTADORES ORIGINAIS DO TOPO ====================
+function atualizarContadoresPainel(lista) {
+    const countPendentes = document.getElementById('countPendentes');
+    const countAndamento = document.getElementById('countAndamento');
+    const countResolvidos = document.getElementById('countResolvidos');
+    const countTotal = document.getElementById('countTotal');
+
+    if (countPendentes) countPendentes.innerText = lista.filter(o => o.status === 'Pendente').length;
+    if (countAndamento) countAndamento.innerText = lista.filter(o => o.status === 'Em Andamento').length;
+    if (countResolvidos) countResolvidos.innerText = lista.filter(o => o.status === 'Resolvido').length;
+    if (countTotal) countTotal.innerText = lista.length;
 }
 
-function mudarEquipaElemento(id, novaEquipa) {
-    const ocorr = ocorrencias.find(o => o.id == id);
-    if (ocorr) {
-        ocorr.equipa = novaEquipa;
-        salvarOcorrenciasLocalStorage();
-        atualizarPainelGeral();
+// ==================== FILTROS DE STATUS ORIGINAIS ====================
+function filtrarOcorrencias(statusFiltro) {
+    if (!window.todasOcorrencias) return;
+
+    // Atualiza a classe ativa nos botões originais
+    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+    if (event && event.target) event.target.classList.add('active');
+
+    if (statusFiltro === 'todos') {
+        renderizarCardsPainel(window.todasOcorrencias);
+    } else {
+        const filtradas = window.todasOcorrencias.filter(o => o.status.toLowerCase() === statusFiltro.toLowerCase());
+        renderizarCardsPainel(filtradas);
     }
 }
 
-function avancarStatusElemento(id) {
-    const ocorr = ocorrencias.find(o => o.id == id);
-    if (!ocorr) return;
-    if (ocorr.status === 'pendente') {
-        ocorr.status = 'andamento';
-        if (ocorr.equipa === 'Não Atribuída') ocorr.equipa = equipasDisponiveis[0];
-    } else if (ocorr.status === 'andamento') {
-        ocorr.status = 'resolvido';
+// ==================== ATUALIZAÇÕES EM TEMPO REAL NA API (PATCH) ====================
+async function avancarStatusElemento(id, statusAtual) {
+    let novoStatus = "Pendente";
+    if (statusAtual === "Pendente") novoStatus = "Em Andamento";
+    else if (statusAtual === "Em Andamento") novoStatus = "Resolvido";
+
+    try {
+        const resposta = await fetch(`${API_URL}/${id}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ novoStatus })
+        });
+
+        if (resposta.ok) {
+            atualizarPainelGeral();
+        }
+    } catch (err) {
+        console.error(err);
     }
-    salvarOcorrenciasLocalStorage();
-    atualizarPainelGeral();
-    dispararAlertaInternoEmpresa(ocorr);
 }
 
-// ==================== LOGIN / LOGOUT ====================
+async function mudarEquipaElemento(id) {
+    const select = document.getElementById(`select-equipe-${id}`);
+    const novaEquipa = select ? select.value : '';
+
+    try {
+        // Envia a brigada selecionada para salvar direto no documento do Firestore
+        const resposta = await fetch(`${API_URL}/${id}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ equipa: novaEquipa })
+        });
+
+        if (resposta.ok) {
+            alert(`Sucesso: Ocorrência atribuída à ${novaEquipa}!`);
+            atualizarPainelGeral();
+        }
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+// ==================== LOGOUT E INICIALIZAÇÃO ====================
 function logout() {
     localStorage.removeItem('admin_logado');
-    window.location.href = 'index.html';
+    window.location.href = 'login.html';
 }
 
-
-
-// ==================== NAVBAR DINÂMICA (scroll + sidebar) ====================
-window.addEventListener('scroll', function() {
-    const header = document.querySelector('header');
-    if (header && window.scrollY > 50) header.classList.add('scrolled');
-    else if (header) header.classList.remove('scrolled');
-});
-
 document.addEventListener('DOMContentLoaded', () => {
-    // Sidebar mobile
-    const toggleBtn = document.getElementById('sidebarToggleBtn');
-    const sidebar = document.getElementById('sidebar');
-    const closeBtn = document.getElementById('sidebarClose');
-    const overlay = document.getElementById('sidebarOverlay');
-    const body = document.body;
+    const form = document.getElementById('formReporte');
+    if (form) form.addEventListener('submit', salvarOcorrencia);
 
-    if (toggleBtn && sidebar) {
-        const openSidebar = () => {
-            sidebar.classList.add('open');
-            if (overlay) overlay.classList.add('active');
-            body.classList.add('sidebar-open');
-        };
-        const closeSidebar = () => {
-            sidebar.classList.remove('open');
-            if (overlay) overlay.classList.remove('active');
-            body.classList.remove('sidebar-open');
-        };
-        toggleBtn.addEventListener('click', openSidebar);
-        if (closeBtn) closeBtn.addEventListener('click', closeSidebar);
-        if (overlay) overlay.addEventListener('click', closeSidebar);
-        document.querySelectorAll('.sidebar-nav a, .btn-entrar-sidebar').forEach(link => {
-            link.addEventListener('click', () => {
-                if (window.innerWidth <= 768) closeSidebar();
-            });
-        });
-    }
-
-    // Inicializar painel admin se estiver na página correta
     if (document.getElementById('containerCardsOcorrencias')) {
         atualizarPainelGeral();
     }
 });
 
-// Tornar funções globais para os onclick no HTML
+// Vinculação global para os cliques do HTML funcionarem perfeitamente
 window.abrirReporte = abrirReporte;
 window.toggleModal = toggleModal;
-window.salvarOcorrencia = salvarOcorrencia;
+window.filtrarOcorrencias = filtrarOcorrencias;
 window.avancarStatusElemento = avancarStatusElemento;
 window.mudarEquipaElemento = mudarEquipaElemento;
-window.filtrarOcorrencias = filtrarOcorrencias;
 window.logout = logout;
