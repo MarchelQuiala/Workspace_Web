@@ -280,6 +280,8 @@ function logout() {
     window.location.href = 'index.html';
 }
 
+
+
 // ==================== NAVBAR DINÂMICA (scroll + sidebar) ====================
 window.addEventListener('scroll', function() {
     const header = document.querySelector('header');

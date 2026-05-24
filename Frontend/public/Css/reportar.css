@@ -586,45 +586,47 @@ nav a.active::after {
 }
 
 /* --- FILTROS ESTILIZADOS --- */
-.filter-controls-container {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    margin-top: 10px;
-}
+ .filter-controls-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+            margin-top: 10px;
+        }
 
-.select-styled {
-    background: linear-gradient(135deg, var(--primary-green), var(--light-green));
-    color: white;
-    border: none;
-    padding: 12px 20px;
-    font-size: 0.9rem;
-    font-weight: bold;
-    border-radius: 30px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    outline: none;
-    appearance: none;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='white' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/></svg>");
-    background-repeat: no-repeat;
-    background-position: right 14px center;
-    padding-right: 38px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-}
+        .select-styled {
+            background-color: var(--primary-green);
+            color: #ffffff;
+            border: none;
+            padding: 12px 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            outline: none;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='white' class='bi bi-chevron-down' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/></svg>");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            padding-right: 38px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
 
-.select-styled:hover {
-    filter: brightness(1.1);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-}
+        .select-styled:hover {
+            filter: brightness(1.1);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
 
-.select-styled option {
-    background-color: white;
-    color: #333;
-    font-weight: normal;
-}
+        .select-styled option {
+            background-color: #ffffff;
+            color: #333333;
+            font-weight: normal;
+        }
 
 /* --- GRID DE CARDES OPERACIONAIS --- */
 .cards-container {
@@ -756,7 +758,7 @@ nav a.active::after {
     margin-bottom: 15px;
     flex-grow: 1;
     display: -webkit-box;
-    -webkit-line-clamp: 3;
+   /* -webkit-line-clamp: 3; */
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
@@ -996,3 +998,4 @@ footer {
         grid-template-columns: 1fr;
     }
 }
+
