@@ -1,3 +1,4 @@
+
 # 🌍 SOS Lixo 
 
 O **SOS Lixo** é uma plataforma colaborativa desenvolvida para ajudar no combate ao descarte irregular de lixo em Angola. O sistema permite que cidadãos denunciem áreas com lixo, enquanto empresas responsáveis pela recolha recebem notificações automáticas para agir rapidamente.
@@ -8,7 +9,7 @@ O **SOS Lixo** é uma plataforma colaborativa desenvolvida para ajudar no combat
 
 - [Funcionalidades](#-funcionalidades)
 - [Tecnologias](#-tecnologias)
-- [Setup](#-setup-local)
+- [Setup Local](#-setup-local)
 - [Estrutura do Projeto](#-estrutura-do-projeto)
 - [Como Contribuir](#-contribuindo)
 - [Licença](#-licença)
@@ -18,10 +19,10 @@ O **SOS Lixo** é uma plataforma colaborativa desenvolvida para ajudar no combat
 ## 🚀 Funcionalidades
 
 - 📍 Registo de áreas com lixo
-- 🗺️ Mapa interativo de ocorrências
+- 🗺️ Mapa interativo de ocorrências (`mapa.html`)
 - 📸 Upload de imagens das áreas denunciadas
 - 🔔 Sistema de notificações automáticas
-- 📊 Painel administrativo para monitoramento
+- 📊 Painel administrativo para monitoramento (`ReportAdm.html`)
 - ✅ Atualização do estado das ocorrências
 - 📱 Interface responsiva para dispositivos móveis e desktop
 
@@ -32,14 +33,14 @@ O **SOS Lixo** é uma plataforma colaborativa desenvolvida para ajudar no combat
 ### Frontend
 - HTML5
 - CSS3
-- JavaScript
+- JavaScript (Vanilla)
 
 ### Backend
 - Node.js
-- Express.js
+- Express.js (gerenciado via `server.js` e rotas)
 
-### Database
-- Firebase Realtime Database
+### Database / Serviços
+- Firebase Realtime Database (configurações na pasta `firebase`)
 
 ---
 
@@ -47,80 +48,89 @@ O **SOS Lixo** é uma plataforma colaborativa desenvolvida para ajudar no combat
 
 ### Pré-requisitos
 - Node.js (v16+)
-- npm ou yarn
-- Conta Firebase
+- npm
 
-### Backend
+### Passos para Instalação
 
-\`\`\`bash
-cd backend
+1. Clone o repositório e aceda à pasta do projeto:
+   ```bash
+   cd WORKSPACE_WEB-MAIN
+
+```
+
+2. Instale as dependências do projeto:
+```bash
 npm install
-cp ../.env.example ../.env
-# Editar .env com suas credenciais Firebase
-npm start
-# API rodará em http://localhost:5000
-\`\`\`
 
-### Frontend
+```
 
-\`\`\`bash
-cd frontend
-npm install
+
+3. Inicie o servidor local:
+```bash
 npm start
-# Aplicação rodará em http://localhost:3000
-\`\`\`
+
+```
+
+
+*(Ou `node server.js`, dependendo do script configurado no teu `package.json`)*
+4. Abra no navegador:
+* A aplicação estará disponível em `http://localhost:3000` (ou na porta configurada no `server.js`).
+
+
 
 ---
 
 ## 📁 Estrutura do Projeto
 
-\`\`\`
-agents-organizing-professional-docs/
-├── frontend/                 # Aplicação Frontend
-│   ├── public/              # Arquivos estáticos
-│   ├── src/                 # Código-fonte
-│   │   ├── assets/          # Imagens e recursos
-│   │   ├── components/      # Componentes reutilizáveis
-│   │   ├── pages/           # Páginas principais
-│   │   ├── styles/          # CSS/Estilos
-│   │   └── js/              # JavaScript utilities
-│   └── package.json
-├── backend/                 # API Backend
-│   ├── src/                 # Código-fonte
-│   │   ├── routes/          # Rotas da API
-│   │   ├── config/          # Configurações
-│   │   ├── middleware/      # Middlewares
-│   │   └── utils/           # Funções utilitárias
-│   ├── server.js            # Entry point
-│   └── package.json
-├── docs/                    # Documentação
-├── uploads/                 # Arquivos enviados
-├── .env.example             # Exemplo de variáveis de ambiente
-├── .gitignore
-├── README.md
-└── CONTRIBUTING.md
-\`\`\`
+```
+WORKSPACE_WEB-MAIN/
+├── .backup/               # Cópias de segurança do projeto
+├── assets/                # Imagens, ícones e recursos estáticos
+├── css/                   # Folhas de estilo (CSS)
+├── firebase/              # Scripts de configuração e conexão com o Firebase
+├── js/                    # Scripts JavaScript do lado do cliente
+├── node_modules/          # Dependências instaladas pelo npm
+├── routes/                # Rotas da aplicação (Backend / Express)
+├── .gitignore             # Arquivos ignorados pelo Git
+├── index.html             # Página inicial / Landing Page
+├── login.html             # Página de autenticação de utilizadores
+├── mapa.html              # Mapa interativo de ocorrências
+├── package-lock.json      # Histórico detalhado das dependências
+├── package.json           # Configurações do Node.js e scripts de execução
+├── README.md              # Documentação do projeto
+├── ReportAdm.html         # Painel administrativo / Relatórios
+└── server.js              # Ponto de entrada do backend (Servidor Node.js)
+
+```
 
 ---
 
 ## 🤝 Contribuindo
 
-Consulte [CONTRIBUTING.md](CONTRIBUTING.md) para diretrizes de contribuição.
+Se quiseres contribuir para o projeto, segue os passos abaixo:
 
-### Passos Rápidos
-
-1. Fork o projeto
-2. Crie uma branch para sua feature (\`git checkout -b feature/AmazingFeature\`)
-3. Commit suas mudanças (\`git commit -m 'Add some AmazingFeature'\`)
-4. Push para a branch (\`git push origin feature/AmazingFeature\`)
-5. Abra um Pull Request
+1. Faz um **Fork** do projeto
+2. Cria uma branch para a tua funcionalidade (`git checkout -b feature/NovaFuncionalidade`)
+3. Sobe as tuas alterações (`git commit -m 'Adiciona NovaFuncionalidade'`)
+4. Envia para a branch (`git push origin feature/NovaFuncionalidade`)
+5. Abre um **Pull Request**
 
 ---
 
 ## 📄 Licença
 
-Este projeto está sob a licença MIT. Veja o arquivo LICENSE para mais detalhes.
+Este projeto está sob a licença MIT.
 
 ---
 
 ### 🇦🇴 "Uma cidade limpa começa com a participação de todos."
+
+```
+
+---
+### O que foi alterado:
+1. **Estrutura do Projeto:** Removidos os blocos inexistentes `frontend/` e `backend/`. Agora reflete exatamente os ficheiros da árvore do VS Code (incluindo as páginas HTML soltas e o `server.js` na raiz).
+2. **Setup Local Simplificado:** Como o projeto está unificado, o utilizador só precisa de rodar `npm install` e `npm start` uma única vez na raiz, tornando a instalação muito mais simples.
+3. **Tecnologias:** Ajustado para focar no mapeamento das pastas reais (`firebase/` e `routes/`).
+
+```
