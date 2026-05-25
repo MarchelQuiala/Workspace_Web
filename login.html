@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | SOS LIXO</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="Css/login.css">
+    <style>
+        /* Estilos adicionais para os novos recursos mantendo o padrão visual */
+        .login-footer-links {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+        .login-footer-links a {
+            color: #2E7D32;
+            text-decoration: none;
+            transition: 0.2s;
+            font-weight: 500;
+        }
+        .login-footer-links a:hover {
+            color: #4CAF50;
+            text-decoration: underline;
+        }
+        .info-msg {
+            color: #1976D2;
+            font-size: 0.85rem;
+            margin-top: 10px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <i class="fa-solid fa-leaf logo"></i>
+        <h2>Acesso Administrativo</h2>
+        <form id="loginForm">
+            <input type="email" id="usuario" placeholder="E-mail do Administrador" autocomplete="off" required>
+            <input type="password" id="senha" placeholder="Senha" required>
+            <button type="submit" id="btnEntrar">Entrar no Painel</button>
+            <div id="erroMsg" class="erro"></div>
+            <div id="infoMsg" class="info-msg"></div>
+        </form>
+
+        <div class="login-footer-links">
+            <a href="index.html"><i class="fa-solid fa-arrow-left"></i> Voltar</a>
+            <a href="#" id="btnRecuperar">Esqueci-me da senha</a>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="js/login.js"></script>
+</body>
+</html>

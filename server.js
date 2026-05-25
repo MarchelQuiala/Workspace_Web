@@ -6,7 +6,7 @@ const path = require('path');
 
 // Inicializa o Firebase Admin usando o ficheiro de chaves privadas
 // Certifique-se de que o ficheiro 'key-firebase.json' está na raiz da pasta backend
-const serviceAccount = require('./key-firebase.json');
+const serviceAccount = require('.//firebase/keys/key-firebase.json');
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),

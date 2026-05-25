@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOS LIXO - Painel Integrado de Gestão de Ocorrências</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/reportar.css">
+</head>
+
+<script>
+    // Verifica se o usuário está logado como admin
+    if (localStorage.getItem('admin_logado') !== 'true') {
+        window.location.href = 'login.html'; // redireciona para o login
+    }
+</script>
+<body>
+
+    <div class="container">
+        <header>
+            <div class="logo-area">
+                <i class="fa-solid fa-leaf logo-icon"></i>
+                <div class="logo-text">
+                    <h1>S.O.S<br><span>LIXO</span></h1>
+                </div>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Inicio</a></li>
+                    <li><a href="#">Mapa</a></li>
+                    <li><a href="#">Relatórios</a></li>
+                    <li><a href="#">Empresas</a></li>
+                    <li><a href="#">Sobre</a></li>
+  <li><button class="btn-entrar" onclick="logout()" style="background-color: var(--prio-alta, #D32F2F); border: none; cursor: pointer;"><i class="fa-solid fa-power-off"></i> Sair</button></li>
+                </ul>
+            </nav>
+        </header>
+
+        <div class="admin-alert-center" id="painelAlertas">
+            <div>
+                <h5><i class="fa-solid fa-bell fa-bounce"></i> ALERTA INTERNO (Administração / Concessionária)</h5>
+                <p id="textoAlerta">Nenhum alerta recente pendente. As empresas parceiras operam na normalidade geográfica configurada.</p>
+            </div>
+            <small style="opacity: 0.7; font-weight: bold;">Real-time Monitor</small>
+        </div>
+
+        <h3 style="margin-bottom: 15px; color: var(--dark-gray); font-size: 1.1rem;"><i class="fa-solid fa-chart-line"></i> Relatório Executivo de Desempenho</h3>
+        <section class="report-cards">
+            <div class="card-stat">
+                <h4>Pontos Críticos Registados</h4>
+                <div class="stat-value" id="totalPontos">0 Pontos</div>
+                <div class="stat-sub">Foco Geográfico: Luanda</div>
+            </div>
+            <div class="card-stat" style="border-top-color: var(--status-andamento);">
+                <h4>Tempo Médio de Resposta</h4>
+                <div class="stat-value">24 Horas</div>
+                <div class="stat-sub">Meta regulamentar estabelecida</div>
+            </div>
+            <div class="card-stat" style="border-top-color: var(--status-resolvido);">
+                <h4>Taxa de Resolução Municipal</h4>
+                <div class="stat-value" id="taxaResolucao">0%</div>
+                <div class="stat-sub">Eficiência medida em tempo real</div>
+            </div>
+        </section>
+
+        <section class="dashboard-header">
+            <div>
+                <h2>Zonas com Lixo Monitorizadas</h2>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">Acompanhe o estado de denúncias e atribua equipas operacionais diretamente.</p>
+            </div>
+            
+            <div class="filter-controls-container">
+                <select id="filtroMunicipio" class="select-styled" onchange="filtrarOcorrencias()">
+                    <option value="todos">Mundicípio: Todos</option>
+                    <option value="Catete">Catete (Icolo e Bengo)</option>
+                    <option value="Bom Jesus">Bom Jesus (Icolo e Bengo)</option>
+                    <option value="Cazenga">Cazenga</option>
+                    <option value="Viana">Viana</option>
+                </select>
+
+                <select id="filtroPrioridade" class="select-styled" onchange="filtrarOcorrencias()">
+                    <option value="todos">Prioridade: Todas</option>
+                    <option value="alta">Alta</option>
+                    <option value="media">Média</option>
+                    <option value="baixa">Baixa</option>
+                </select>
+
+                <select id="filtroCategoria" class="select-styled" onchange="filtrarOcorrencias()">
+                    <option value="todos">Resíduo: Todos</option>
+                    <option value="Lixo Doméstico">Lixo Doméstico</option>
+                    <option value="Entulho de Obras">Entulho de Obras</option>
+                    <option value="Lixo Eletrónico">Lixo Eletrónico</option>
+                    <option value="Águas Residuais">Águas Residuais</option>
+                </select>
+
+                <button class="btn-add" onclick="toggleModal(true)">
+                    <i class="fa-solid fa-plus"></i> Reportar Nova Ocorrência
+                </button>
+            </div>
+        </section>
+
+        <section class="cards-container" id="containerCardsOcorrencias">
+            </section>
+    </div>
+
+    <div class="modal-overlay" id="modalFormulario">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-triangle-exclamation"></i> Registar Denúncia com Evidência Física</h3>
+                <button class="modal-close" onclick="toggleModal(false)">×</button>
+            </div>
+            <form id="formReporte" onsubmit="salvarOcorrencia(event)">
+                <div class="modal-body">
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="nomeUsuario">Nome do Cidadão *</label>
+                            <input type="text" id="nomeUsuario" required placeholder="Ex: Belmiro Lourenço">
+                        </div>
+                        <div class="form-group">
+                            <label for="telefoneUsuario">Contacto Telefónico *</label>
+                            <input type="tel" id="telefoneUsuario" required placeholder="Ex: 953573228">
+                        </div>
+                    </div>
+
+                    <div class="geo-box">
+                        <label style="font-weight: bold; color: var(--primary-green);">Assistente de Localização (GPS)</label>
+                        <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 5px;">Selecione o GPS para obter dados automáticos ou use a pesquisa para fixar o ponto de recolha.</p>
+                        <div class="geo-buttons">
+                            <button type="button" class="btn-geo" id="btnCapturarGPS">
+                                <i class="fa-solid fa-location-crosshairs"></i> GPS Telemóvel
+                            </button>
+                            <button type="button" class="btn-geo manual" id="btnBuscarEndereco">
+                                <i class="fa-solid fa-magnifying-glass"></i> Validar Texto
+                            </button>
+                        </div>
+                        <div class="geo-status-msg" id="geoStatus">Status: Aguardando coordenadas geográficas...</div>
+                    </div>
+                    
+                    <input type="hidden" id="googleMapsLink">
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="municipio">Município / Zona *</label>
+                            <select id="municipio" required>
+                                <option value="Catete">Catete (Icolo e Bengo)</option>
+                                <option value="Bom Jesus">Bom Jesus (Icolo e Bengo)</option>
+                                <option value="Cazenga">Cazenga</option>
+                                <option value="Viana">Viana</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="categoria">Categoria do Resíduo *</label>
+                            <select id="categoria" required>
+                                <option value="Lixo Doméstico">Lixo Doméstico</option>
+                                <option value="Entulho de Obras">Entulho de Obras</option>
+                                <option value="Lixo Eletrónico">Lixo Eletrónico</option>
+                                <option value="Águas Residuais">Águas Residuais</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="bairro">Bairro / Rua *</label>
+                            <input type="text" id="bairro" required placeholder="Ex: Vila Sede / Proximidades da Comarca">
+                        </div>
+                        <div class="form-group">
+                            <label for="prioridade">Gravidade Esperada *</label>
+                            <select id="prioridade" required>
+                                <option value="alta">Alta (Risco à Saúde Humana)</option>
+                                <option value="media">Média (Obstrução de Via Pública)</option>
+                                <option value="baixa">Baixa (Ponto Inicial)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="descricao">Breve Descrição da Situação *</label>
+                        <textarea id="descricao" rows="2" required placeholder="Descreva os detalhes visuais do acúmulo de resíduos..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="imagemLocal">Evidência Física (Fotografia ou Vídeo Curto) *</label>
+                        <input type="file" id="imagemLocal" accept="image/*,video/*" required onchange="verificarFormatoAnexo(this)">
+                        <small style="color: var(--text-muted); font-size: 0.75rem;">Formatos aceites: JPG, PNG, MP4. Máximo de 15MB.</small>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancelar" onclick="toggleModal(false)">Cancelar</button>
+                    <button type="submit" class="btn-salvar">Submeter Ocorrência</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container footer-grid">
+            <div class="footer-col">
+                <h5>Sobre o Projeto</h5>
+                <p style="font-size:0.8rem; opacity:0.9;">SOS LIXO é uma infraestrutura tecnológica que conecta cidadãos de Angola às administrações e concessionárias para otimização da limpeza pública.</p>
+            </div>
+            <div class="footer-col">
+                <h5>Contactos Técnicos</h5>
+                <ul style="font-size:0.8rem;">
+                    <li><i class="fa-solid fa-phone"></i> +244 953 573 228</li>
+                    <li><i class="fa-solid fa-envelope"></i> suporte@soslixo.ao</li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h5>Entidades Fiscais</h5>
+                <p style="font-size:0.8rem;">Governo Provincial de Luanda e Empresas Concessionárias Registadas.</p>
+            </div>
+            <div class="footer-col" style="display:flex; justify-content:center; align-items:center;">
+                <div class="angola-flag-box">
+                    <div class="flag-colors"></div>
+                    <span style="font-weight:bold; font-size:0.75rem; letter-spacing:1px;">ANGOLA MAIS LIMPA,<br>É POSSÍVEL!</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+   <script src="./js/main.js"></script>
+</body>
+</html>
