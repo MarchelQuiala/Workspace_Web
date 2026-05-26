@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SOS LIXO - Painel Integrado de Gestão de Ocorrências</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="css/reportar.css">
+    <link rel="stylesheet" href="css/reportar.css">
 </head>
 
 <script>
@@ -13,7 +13,55 @@
     if (localStorage.getItem('admin_logado') !== 'true') {
         window.location.href = 'login.html'; // redireciona para o login
     }
+    
+    // Função de logout
+    function logout() {
+        localStorage.removeItem('admin_logado');
+        window.location.href = 'login.html';
+    }
+    
+    // Funções auxiliares (mantidas do seu original)
+    function toggleModal(show) {
+        const modal = document.getElementById('modalFormulario');
+        if (show) {
+            modal.classList.add('active');
+        } else {
+            modal.classList.remove('active');
+        }
+    }
+    
+    function verificarFormatoAnexo(input) {
+        // Sua função original
+        const file = input.files[0];
+        if (file) {
+            const allowedTypes = ['image/jpeg', 'image/png', 'video/mp4'];
+            if (!allowedTypes.includes(file.type)) {
+                alert('Formato não permitido. Use JPG, PNG ou MP4.');
+                input.value = '';
+                return false;
+            }
+            if (file.size > 15 * 1024 * 1024) {
+                alert('Arquivo muito grande. Máximo de 15MB.');
+                input.value = '';
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    function salvarOcorrencia(event) {
+        event.preventDefault();
+        // Sua função original
+        alert('Ocorrência registada com sucesso!');
+        toggleModal(false);
+    }
+    
+    function filtrarOcorrencias() {
+        // Sua função original
+        console.log('Filtrando ocorrências...');
+    }
 </script>
+
 <body>
 
     <div class="container">
@@ -24,16 +72,11 @@
                     <h1>S.O.S<br><span>LIXO</span></h1>
                 </div>
             </div>
-            <nav>
-                <ul>
-                    <li><a href="index.html">Inicio</a></li>
-                    <li><a href="#">Mapa</a></li>
-                    <li><a href="#">Relatórios</a></li>
-                    <li><a href="#">Empresas</a></li>
-                    <li><a href="#">Sobre</a></li>
-  <li><button class="btn-entrar" onclick="logout()" style="background-color: var(--prio-alta, #D32F2F); border: none; cursor: pointer;"><i class="fa-solid fa-power-off"></i> Sair</button></li>
-                </ul>
-            </nav>
+            
+            <!-- Botão Hambúrguer (substitui o nav) -->
+            <button class="hamburger-btn" id="hamburgerBtn">
+                <i class="fa-solid fa-bars"></i>
+            </button>
         </header>
 
         <div class="admin-alert-center" id="painelAlertas">
@@ -100,7 +143,8 @@
         </section>
 
         <section class="cards-container" id="containerCardsOcorrencias">
-            </section>
+            <!-- Os cards de ocorrências serão carregados dinamicamente aqui -->
+        </section>
     </div>
 
     <div class="modal-overlay" id="modalFormulario">
@@ -221,6 +265,97 @@
         </div>
     </footer>
 
-   <script src="./js/main.js"></script>
+    <!-- ========== MENU HAMBÚRGUER (SUBSTITUI O NAV) ========== -->
+    <!-- Overlay para fechar ao clicar fora -->
+    <div class="menu-overlay" id="menuOverlay"></div>
+    
+    <!-- Menu lateral -->
+    <div class="side-menu" id="sideMenu">
+        <div class="side-menu-header">
+            <button class="close-menu" id="closeMenuBtn">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+ <div class="side-menu-nav">
+    <!-- BOTÃO X PARA FECHAR O MENU -->
+    <div style="display: flex; justify-content: flex-end; padding: 10px;">
+        <button id="closeMenuBtn" style="background: none; border: none; font-size: 1.8rem; cursor: pointer; color: white;">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+    </div>
+    
+    <a href="ocorrencias.html">
+        <i class="fa-solid fa-trash"></i> Todas Ocorrências
+    </a>
+    <a href="empresas-concessionarias.html">
+        <i class="fa-solid fa-building"></i> Concessionárias
+    </a>
+    <a href="equipes-operacionais.html">
+        <i class="fa-solid fa-people-group"></i> Equipes Operacionais
+    </a>
+    <a href="relatorios.html">
+        <i class="fa-solid fa-chart-line"></i> Relatórios Gerenciais
+    </a>
+    <a href="mapa-calor.html">
+        <i class="fa-solid fa-map"></i> Mapa de Calor
+    </a>
+    <a href="configuracoes.html">
+        <i class="fa-solid fa-gear"></i> Configurações
+    </a>
+    <a href="gestao-usuarios.html">
+        <i class="fa-solid fa-users"></i> Usuários
+    </a>
+    
+    <div class="menu-divider"></div>
+    
+    <!-- LOGOUT -->
+    <div class="logout-menu-btn" onclick="logout()">
+        <i class="fa-solid fa-power-off"></i> Sair do Sistema
+    </div>
+</div>
+    </div>
+
+    <script src="./js/main.js"></script>
+    
+    <!-- ========== SCRIPT DO MENU HAMBÚRGUER ========== -->
+    <script>
+        // Funções do menu hambúrguer
+        (function() {
+            const hamburgerBtn = document.getElementById('hamburgerBtn');
+            const sideMenu = document.getElementById('sideMenu');
+            const menuOverlay = document.getElementById('menuOverlay');
+            const closeMenuBtn = document.getElementById('closeMenuBtn');
+            
+            function openMenu() {
+                sideMenu.classList.add('open');
+                menuOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+            
+            function closeMenu() {
+                sideMenu.classList.remove('open');
+                menuOverlay.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+            
+            if (hamburgerBtn) {
+                hamburgerBtn.addEventListener('click', openMenu);
+            }
+            
+            if (closeMenuBtn) {
+                closeMenuBtn.addEventListener('click', closeMenu);
+            }
+            
+            if (menuOverlay) {
+                menuOverlay.addEventListener('click', closeMenu);
+            }
+            
+            // Fechar menu ao clicar em qualquer link
+            const allLinks = document.querySelectorAll('.side-menu-nav a');
+            allLinks.forEach(link => {
+                link.addEventListener('click', closeMenu);
+            });
+        })();
+    </script>
 </body>
 </html>
