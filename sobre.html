@@ -3,20 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SOS LIXO - Mapa Interativo</title>
+    <title>SOS LIXO - Sobre</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="css/index.css">
-    <link rel="stylesheet" href="css/mapa.css">
+    <link rel="stylesheet" href="css/sobre.css">
 </head>
 <body>
-<!-- HEADER igual ao sobre.html, com link Mapa ativo -->
+<!-- HEADER (igual ao index, apenas mude os links ativos) -->
 <header>
     <button class="sidebar-toggle-btn" id="sidebarToggleBtn"><i class="fa-solid fa-bars"></i></button>
     <div class="logo-area"><i class="fa-solid fa-leaf logo-icon"></i><div class="logo-text"><h1>S.O.S<br><span>LIXO</span></h1></div></div>
-    <nav class="desktop-nav"><ul><li><a href="index.html">Início</a></li><li><a href="mapa.html" style="color:#FFD700;">Mapa</a></li><li><a href="empresas.html">Empresas</a></li><li><a href="sobre.html">Sobre</a></li><li><a href="contactos.html">Contactos</a></li><li><button class="btn-entrar" onclick="alert('Login em breve')">Entrar</button></li></ul></nav>
+    <nav class="desktop-nav"><ul><li><a href="index.html">Início</a></li><li><a href="mapa.html">Mapa</a></li><li><a href="empresas.html">Empresas</a></li><li><a href="sobre.html" style="color:#FFD700;">Sobre</a></li><li><a href="contactos.html">Contactos</a></li><li><button class="btn-entrar" onclick="alert('Login em breve')">Entrar</button></li></ul></nav>
 </header>
-<!-- SIDEBAR igual -->
+<!-- SIDEBAR (igual ao index) -->
 <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
         <div class="logo-area">
@@ -44,17 +43,29 @@
 
 <main class="main-content">
     <div class="container">
-        <h3 class="section-title">Mapa de Ocorrências</h3>
-        <div class="map-controls">
-            <select id="filtroProvincia"><option value="todas">Todas as províncias</option><option value="Luanda">Luanda</option><option value="Benguela">Icolo e Bengo</option><option value="Huíla">Benguela</option></select>
-            <select id="filtroPrioridade"><option value="todas">Todas prioridades</option><option value="alta">Alta</option><option value="media">Média</option><option value="baixa">Baixa</option></select>
-            <button id="btnAtualizarMapa">Atualizar Mapa</button>
-        </div>
-        <div id="mapaLeaflet" style="height:500px; border-radius:18px;"></div>
-        <p class="map-info">Clique nos marcadores para ver detalhes da ocorrência.</p>
+        <section class="sobre-hero">
+            <h1>Sobre o <span>SOS LIXO</span></h1>
+            <p>Conheça a nossa missão, visão e como estamos a transformar Angola num país mais limpo.</p>
+        </section>
+
+        <section class="sobre-grid">
+            <div class="sobre-card"><i class="fa-solid fa-bullseye"></i><h3>Missão</h3><p>Promover a gestão eficiente de resíduos sólidos em Angola, conectando cidadãos e empresas para um ambiente mais saudável.</p></div>
+            <div class="sobre-card"><i class="fa-solid fa-eye"></i><h3>Visão</h3><p>Ser a principal plataforma de combate ao lixo em África, tornando Angola referência em sustentabilidade e limpeza urbana.</p></div>
+            <div class="sobre-card"><i class="fa-solid fa-heart"></i><h3>Valores</h3><p>Transparência, colaboração, inovação, responsabilidade ambiental e compromisso com a comunidade.</p></div>
+        </section>
+
+        <section class="sobre-historia">
+            <h2>Nossa História</h2>
+            <p>O SOS LIXO nasceu em 2024 de uma necessidade real: moradores de Luanda enfrentavam acúmulo de lixo sem canais eficientes de denúncia. Juntamos tecnologia, geolocalização e parcerias com empresas de recolha para criar uma solução prática e transparente. Hoje, já somamos centenas de ocorrências registadas e dezenas de bairros impactados positivamente.</p>
+            <div class="estatisticas">
+                <div><span>500+</span><label>Ocorrências registadas</label></div>
+                <div><span>12</span><label>Empresas parceiras</label></div>
+                <div><span>8</span><label>Municípios activos</label></div>
+            </div>
+        </section>
     </div>
-    <!-- FOOTER igual -->
-      <footer>
+    <!-- FOOTER (igual ao index) -->
+     <footer>
     <div class="container footer-grid">
         <div class="footer-col">
             <h5>Sobre o Projeto</h5>
@@ -93,7 +104,6 @@
     </div>
 </footer>
 </main>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="js/main.js"></script>
 </body>
 </html>

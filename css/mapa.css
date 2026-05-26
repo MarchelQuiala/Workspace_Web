@@ -1,0 +1,26 @@
+.map-controls {
+    background: white;
+    padding: 15px 20px;
+    border-radius: 18px;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+.map-controls select, .map-controls button {
+    padding: 10px 18px;
+    border-radius: 50px;
+    border: 1px solid #e5e7eb;
+}
+.map-controls button {
+    background: #1B5E20;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+.map-info {
+    margin-top: 15px;
+    text-align: center;
+    color: #6b7280;
+    font-size: 0.9rem;
+}

@@ -23,14 +23,40 @@
     <nav class="desktop-nav">
         <ul>
             <li><a href="index.html">Início</a></li>
-            <li><a href="#">Mapa</a></li>
-            <li><a href="#">Empresas</a></li>
-            <li><a href="#">Sobre</a></li>
-            <li><a href="#">Contactos</a></li>
+            <li><a href="mapa.html">Mapa</a></li>
+            <li><a href="empresas.html">Empresas</a></li>
+            <li><a href="sobre.html">Sobre</a></li>
+            <li><a href="contactos.html">Contactos</a></li>
             <li><button class="btn-entrar" onclick="window.location.href='login.html'">Entrar</button></li>
         </ul>
     </nav>
 </header>
+<!-- SIDEBAR igual -->
+
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <div class="logo-area">
+            <i class="fa-solid fa-leaf logo-icon"></i>
+            <div class="logo-text">
+                <h1>S.O.S<br><span>LIXO</span></h1>
+            </div>
+        </div>
+        <button class="sidebar-close" id="sidebarCloseBtn">&times;</button>
+    </div>
+    <div class="sidebar-nav">
+        <ul>
+            <li><a href="index.html"><i class="fa-solid fa-house"></i> Início</a></li>
+            <li><a href="mapa.html"><i class="fa-solid fa-map"></i> Mapa</a></li>
+            <li><a href="empresas.html"><i class="fa-solid fa-building"></i> Empresas</a></li>
+            <li><a href="sobre.html"><i class="fa-solid fa-circle-info"></i> Sobre</a></li>
+            <li><a href="contactos.html"><i class="fa-solid fa-envelope"></i> Contactos</a></li>
+        </ul>
+    </div>
+    <div class="sidebar-footer">
+        <small>&copy; 2026 SOS LIXO</small>
+    </div>
+</aside>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
 
 <!-- ==================== SIDEBAR (MOBILE) ==================== -->
 
@@ -120,64 +146,13 @@
                         <strong>Nova ocorrência de lixo</strong><br>
                         Local: Bairro Cazenga, Luanda<br>
                         Prioridade: Alta<br>
-                        <a href="#" style="color: var(--primary-green); font-size:0.75rem;">Ver no mapa</a>
+                        <a href="#" style="color: var(--primary-green); font-size:0.75rem;"></a>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section class="dashboard-preview-grid">
-            <div class="map-card">
-                <h4 style="margin-bottom: 10px; font-size: 0.9rem; text-transform: uppercase;">Mapa de Ocorrências</h4>
-                <div class="map-filter">
-                    <select><option>Província (Todas)</option></select>
-                    <select><option>Município (Todos)</option></select>
-                    <select><option>Prioridade (Todas)</option></select>
-                </div>
-                <div class="mock-map">
-                    <p style="color:#888; font-size:0.8rem;"><i class="fa-solid fa-map"></i> Simulação do Mapa Georreferenciado</p>
-                    <div style="position:absolute; top:30%; left:40%; background:var(--high-priority); width:12px; height:12px; border-radius:50%;"></div>
-                    <div style="position:absolute; top:60%; left:50%; background:var(--medium-priority); width:12px; height:12px; border-radius:50%;"></div>
-                    <div style="position:absolute; top:45%; left:70%; background:var(--low-priority); width:12px; height:12px; border-radius:50%;"></div>
-                </div>
-            </div>
 
-            <div class="panel-card">
-                <h4 style="margin-bottom: 10px; font-size: 0.9rem; text-transform: uppercase;">Painel da Empresa</h4>
-                <div class="stats-summary">
-                    <div class="stat-item"><span>128</span><label>Total</label></div>
-                    <div class="stat-item" style="color:var(--medium-priority)"><span>45</span><label>Pendentes</label></div>
-                    <div class="stat-item" style="color:dodgerblue"><span>32</span><label>Em curso</label></div>
-                    <div class="stat-item" style="color:var(--low-priority)"><span>51</span><label>Resolvidas</label></div>
-                </div>
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>Local</th>
-                            <th>Prioridade</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Bairro Cazenga</td>
-                            <td><span class="badge alta">Alta</span></td>
-                            <td>Pendente</td>
-                        </tr>
-                        <tr>
-                            <td>Av. 21 de Janeiro</td>
-                            <td><span class="badge media">Média</span></td>
-                            <td>Em andamento</td>
-                        </tr>
-                        <tr>
-                            <td>Viana - Zango</td>
-                            <td><span class="badge baixa">Baixa</span></td>
-                            <td>Resolvida</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
 
         <section class="bottom-cta-section">
             <div>
@@ -197,59 +172,69 @@
             </div>
         </section>
 
-        <section class="quick-contacts">
-            <div class="contact-item-row">
-                <i class="fa-brands fa-whatsapp"></i>
-                <div>
-                    <strong style="font-size:0.8rem; color:#666;">WHATSAPP</strong>
-                    <p style="font-weight:bold;">953 573 228</p>
-                </div>
-            </div>
-            <div class="contact-item-row">
-                <i class="fa-solid fa-phone"></i>
-                <div>
-                    <strong style="font-size:0.8rem; color:#666;">LIGAR</strong>
-                    <p style="font-weight:bold;">931 338 548</p>
-                </div>
-            </div>
-            <div class="contact-item-row">
-                <i class="fa-solid fa-envelope"></i>
-                <div>
-                    <strong style="font-size:0.8rem; color:#666;">E-MAIL</strong>
-                    <p style="font-weight:bold; font-size:0.85rem;">belmirolouren46@gmail.com</p>
-                </div>
-            </div>
-        </section>
+       <section class="quick-contacts">
+    <a href="https://wa.me/244953573228" target="_blank" class="contact-item-row">
+        <i class="fa-brands fa-whatsapp"></i>
+        <div>
+            <strong>WHATSAPP</strong>
+            <p>953 573 228</p>
+        </div>
+    </a>
+    <a href="tel:+244931338548" class="contact-item-row">
+        <i class="fa-solid fa-phone"></i>
+        <div>
+            <strong>LIGAR</strong>
+            <p>931 338 548</p>
+        </div>
+    </a>
+    <a href="mailto:belmirolouren46@gmail.com" class="contact-item-row">
+        <i class="fa-solid fa-envelope"></i>
+        <div>
+            <strong>E-MAIL</strong>
+            <p>belmirolouren46@gmail.com</p>
+        </div>
+    </a>
+</section>
     </div>
 
-    <footer>
-        <div class="container footer-grid">
-            <div class="footer-col">
-                <h5>Sobre o Projeto</h5>
-                <p style="font-size:0.8rem; opacity:0.9;">Lixo Zero Angola é uma iniciativa que conecta cidadãos, comunidades e empresas de recolha para combater o lixo e promover um ambiente mais limpo e sustentável em todo o território nacional.</p>
-            </div>
-            <div class="footer-col">
-                <h5>Contactos</h5>
-                <ul style="font-size:0.8rem;">
-                    <li><i class="fa-solid fa-phone"></i> +244 953 573 228</li>
-                    <li><i class="fa-solid fa-phone"></i> +244 931 338 548</li>
-                    <li><i class="fa-solid fa-envelope"></i> belmirolouren46@gmail.com</li>
-                    <li><i class="fa-solid fa-location-dot"></i> Luanda, Angola</li>
-                </ul>
-            </div>
-            <div class="footer-col">
-                <h5>Apoio</h5>
-                <p style="font-size:0.8rem;">Empresas parceiras de recolha e gestão de resíduos.</p>
-                <i class="fa-solid fa-handshake" style="font-size: 2rem; margin-top:10px;"></i>
-            </div>
-            <div class="footer-col" style="display:flex; justify-content:center; align-items:center;">
-                <div class="angola-flag-box">
-                    <div class="flag-colors"></div>
-                    <span style="font-weight:bold; font-size:0.75rem; letter-spacing:1px;">ANGOLA MAIS LIMPA,<br>É POSSÍVEL!</span>
-                </div>
+  <footer>
+    <div class="container footer-grid">
+        <div class="footer-col">
+            <h5>Sobre o Projeto</h5>
+            <p>Lixo Zero Angola é uma iniciativa que conecta cidadãos, comunidades e empresas de recolha para combater o lixo e promover um ambiente mais limpo e sustentável em todo o território nacional.</p>
+        </div>
+        <div class="footer-col">
+            <h5>Contactos</h5>
+            <ul>
+                <li><i class="fa-solid fa-phone"></i> +244 953 573 228</li>
+                <li><i class="fa-solid fa-phone"></i> +244 931 338 548</li>
+                <li><i class="fa-solid fa-envelope"></i> belmirolouren46@gmail.com</li>
+                <li><i class="fa-solid fa-location-dot"></i> Luanda, Angola</li>
+            </ul>
+            <!-- Redes sociais -->
+            <div class="social-links">
+               <!-- <a href="https://wa.me/244953573228" target="_blank" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a> -->
+                <a href="https://www.facebook.com" target="_blank" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                <a href="https://www.instagram.com" target="_blank" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                <a href="https://www.linkedin.com" target="_blank" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
             </div>
         </div>
-    </footer>
+        <div class="footer-col">
+            <h5>Apoio</h5>
+            <p>Empresas parceiras de recolha e gestão de resíduos.</p>
+            <i class="fa-solid fa-handshake" style="font-size: 2rem; margin-top: 10px;"></i>
+        </div>
+        <div class="footer-col">
+            <div class="angola-flag-box">
+                <div class="flag-colors"></div>
+                <span>ANGOLA MAIS LIMPA,<br>É POSSÍVEL!</span>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2026 SOS LIXO - Todos os direitos reservados</p>
+    </div>
+</footer>
 </div>
 
 <!-- ==================== MODAL DE REPORTE COM GEOLOCALIZAÇÃO ==================== -->

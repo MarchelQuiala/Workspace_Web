@@ -1,0 +1,63 @@
+.sobre-hero {
+    text-align: center;
+    padding: 60px 0 30px;
+}
+.sobre-hero h1 {
+    font-size: 2.8rem;
+    color: #111827;
+}
+.sobre-hero h1 span {
+    color: #1B5E20;
+}
+.sobre-hero p {
+    font-size: 1.2rem;
+    color: #6b7280;
+}
+.sobre-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    margin: 50px 0;
+}
+.sobre-card {
+    background: white;
+    padding: 30px;
+    border-radius: 18px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+.sobre-card i {
+    font-size: 2.5rem;
+    color: #1B5E20;
+    margin-bottom: 20px;
+}
+.sobre-card h3 {
+    margin-bottom: 15px;
+}
+.sobre-historia {
+    background: white;
+    padding: 40px;
+    border-radius: 18px;
+    margin: 40px 0;
+}
+.sobre-historia h2 {
+    color: #1B5E20;
+    margin-bottom: 20px;
+}
+.estatisticas {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 40px;
+    text-align: center;
+}
+.estatisticas div span {
+    display: block;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #1B5E20;
+}
+@media (max-width: 768px) {
+    .sobre-grid { grid-template-columns: 1fr; }
+    .estatisticas { flex-direction: column; gap: 20px; }
+}
+

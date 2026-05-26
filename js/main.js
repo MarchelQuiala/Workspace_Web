@@ -304,3 +304,83 @@ window.filtrarOcorrencias = filtrarOcorrencias;
 window.avancarStatusElemento = avancarStatusElemento;
 window.mudarEquipaElemento = mudarEquipaElemento;
 window.logout = logout;
+
+
+
+
+// ==================== NOVAS FUNCIONALIDADES (SEM CONFLITO) ====================
+// 1. SIDEBAR MOBILE
+document.addEventListener('DOMContentLoaded', () => {
+    const sidebarEl = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    const toggleBtn = document.getElementById('sidebarToggleBtn');
+    const closeBtn = document.getElementById('sidebarCloseBtn');
+
+    if (sidebarEl && toggleBtn && closeBtn && overlay) {
+        function openSidebar() {
+            sidebarEl.classList.add('open');
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeSidebar() {
+            sidebarEl.classList.remove('open');
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        toggleBtn.addEventListener('click', openSidebar);
+        closeBtn.addEventListener('click', closeSidebar);
+        overlay.addEventListener('click', closeSidebar);
+    }
+});
+
+// 2. CARROSSEL DE EMPRESAS (usando Swiper)
+if (document.querySelector('.empresas-swiper') && typeof Swiper !== 'undefined') {
+    new Swiper('.empresas-swiper', {
+        loop: true,
+        autoplay: { delay: 3000, disableOnInteraction: false }, // automático
+        slidesPerView: 1,
+        spaceBetween: 20,
+        pagination: { el: '.swiper-pagination', clickable: true },
+        navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
+        breakpoints: {
+            640: { slidesPerView: 2 },
+            1024: { slidesPerView: 3 }
+        }
+    });
+}
+
+// 3. MAPA INTERATIVO (página mapa.html)
+if (document.getElementById('mapaLeaflet') && typeof L !== 'undefined') {
+    let map = L.map('mapaLeaflet').setView([-8.8383, 13.2344], 12);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> & CartoDB'
+    }).addTo(map);
+
+    // Dados de exemplo (pode vir da sua API depois)
+    const ocorrenciasMapa = [
+        { lat: -8.8383, lng: 13.2344, titulo: 'Lixo no Cazenga', prioridade: 'alta', descricao: 'Acúmulo de lixo doméstico.' },
+        { lat: -8.8283, lng: 13.2444, titulo: 'Entulho na Av. 21 Janeiro', prioridade: 'media', descricao: 'Restos de construção.' },
+        { lat: -8.8483, lng: 13.2244, titulo: 'Viana - Zango', prioridade: 'baixa', descricao: 'Ponto de lixo inicial.' }
+    ];
+
+    function adicionarMarcadores(filtroPrioridade = 'todas') {
+        map.eachLayer(layer => {
+            if (layer instanceof L.Marker) map.removeLayer(layer);
+        });
+        ocorrenciasMapa.forEach(occ => {
+            if (filtroPrioridade !== 'todas' && occ.prioridade !== filtroPrioridade) return;
+            L.marker([occ.lat, occ.lng])
+                .bindPopup(`<b>${occ.titulo}</b><br>Prioridade: ${occ.prioridade}<br>${occ.descricao}`)
+                .addTo(map);
+        });
+    }
+    adicionarMarcadores();
+
+    const btnAtualizar = document.getElementById('btnAtualizarMapa');
+    if (btnAtualizar) {
+        btnAtualizar.addEventListener('click', () => {
+            const prioridade = document.getElementById('filtroPrioridade')?.value || 'todas';
+            adicionarMarcadores(prioridade);
+        });
+    }
+}

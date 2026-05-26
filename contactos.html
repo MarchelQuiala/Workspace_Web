@@ -3,18 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SOS LIXO - Mapa Interativo</title>
+    <title>SOS LIXO - Contactos</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="css/index.css">
-    <link rel="stylesheet" href="css/mapa.css">
+    <link rel="stylesheet" href="css/contactos.css">
 </head>
 <body>
-<!-- HEADER igual ao sobre.html, com link Mapa ativo -->
+<!-- HEADER com link Contactos ativo -->
 <header>
     <button class="sidebar-toggle-btn" id="sidebarToggleBtn"><i class="fa-solid fa-bars"></i></button>
     <div class="logo-area"><i class="fa-solid fa-leaf logo-icon"></i><div class="logo-text"><h1>S.O.S<br><span>LIXO</span></h1></div></div>
-    <nav class="desktop-nav"><ul><li><a href="index.html">Início</a></li><li><a href="mapa.html" style="color:#FFD700;">Mapa</a></li><li><a href="empresas.html">Empresas</a></li><li><a href="sobre.html">Sobre</a></li><li><a href="contactos.html">Contactos</a></li><li><button class="btn-entrar" onclick="alert('Login em breve')">Entrar</button></li></ul></nav>
+    <nav class="desktop-nav"><ul><li><a href="index.html">Início</a></li><li><a href="mapa.html">Mapa</a></li><li><a href="empresas.html">Empresas</a></li><li><a href="sobre.html">Sobre</a></li><li><a href="contactos.html" style="color:#FFD700;">Contactos</a></li><li><button class="btn-entrar" onclick="alert('Login em breve')">Entrar</button></li></ul></nav>
 </header>
 <!-- SIDEBAR igual -->
 <aside class="sidebar" id="sidebar">
@@ -44,17 +43,33 @@
 
 <main class="main-content">
     <div class="container">
-        <h3 class="section-title">Mapa de Ocorrências</h3>
-        <div class="map-controls">
-            <select id="filtroProvincia"><option value="todas">Todas as províncias</option><option value="Luanda">Luanda</option><option value="Benguela">Icolo e Bengo</option><option value="Huíla">Benguela</option></select>
-            <select id="filtroPrioridade"><option value="todas">Todas prioridades</option><option value="alta">Alta</option><option value="media">Média</option><option value="baixa">Baixa</option></select>
-            <button id="btnAtualizarMapa">Atualizar Mapa</button>
+        <h3 class="section-title">Fale Conosco</h3>
+        <div class="contact-page-grid">
+            <div class="contact-form">
+                <h3>Envie uma mensagem</h3>
+                <form id="formContacto">
+                    <input type="text" placeholder="Seu nome" required>
+                    <input type="email" placeholder="Seu e-mail" required>
+                    <input type="tel" placeholder="Telefone (opcional)">
+                    <textarea rows="5" placeholder="Escreva sua mensagem..." required></textarea>
+                    <button type="submit">Enviar mensagem</button>
+                </form>
+            </div>
+            <div class="contact-info">
+                <h3>Informações de contacto</h3>
+                <div class="contact-info-item"><i class="fa-brands fa-whatsapp"></i><p>(+244) 953 573 228</p></div>
+                <div class="contact-info-item"><i class="fa-solid fa-phone"></i><p>(+244) 931 338 548</p></div>
+                <div class="contact-info-item"><i class="fa-solid fa-envelope"></i><p>belmirolouren46@gmail.com</p></div>
+                <div class="contact-info-item"><i class="fa-solid fa-location-dot"></i><p>Luanda, Angola</p></div>
+                <div class="social-links">
+                    <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
+                </div>
+            </div>
         </div>
-        <div id="mapaLeaflet" style="height:500px; border-radius:18px;"></div>
-        <p class="map-info">Clique nos marcadores para ver detalhes da ocorrência.</p>
     </div>
-    <!-- FOOTER igual -->
-      <footer>
+     <footer>
     <div class="container footer-grid">
         <div class="footer-col">
             <h5>Sobre o Projeto</h5>
@@ -93,7 +108,6 @@
     </div>
 </footer>
 </main>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="js/main.js"></script>
 </body>
 </html>
