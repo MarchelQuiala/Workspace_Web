@@ -1008,3 +1008,21 @@ footer {
     }
 }
 
+/* ============================================ */
+/* AJUSTE FINAL DO MENU HAMBÚRGUER              */
+/* ============================================ */
+
+/* Aumentar z-index do overlay para cobrir o header */
+.menu-overlay {
+    z-index: 9999 !important;
+}
+
+.side-menu {
+    z-index: 10000 !important;
+}
+
+/* Garantir que o header fique abaixo do overlay quando aberto */
+header {
+    z-index: 100;
+}
+

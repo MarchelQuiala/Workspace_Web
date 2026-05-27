@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teste - Menu Hambúrguer</title>
+    <title>Teste Menu Hambúrguer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -13,51 +14,61 @@
 
         body {
             font-family: Arial, sans-serif;
+            padding-top: 80px;
         }
 
-        /* HEADER */
+        /* HEADER FIXO */
         header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
             background: #2E7D32;
-            padding: 15px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            color: white;
+            padding: 15px 20px;
+            z-index: 100;
         }
 
         .logo {
+            color: white;
             font-size: 1.5rem;
             font-weight: bold;
         }
 
-        /* BOTÃO HAMBÚRGUER */
-        .hamburger {
-            background: none;
-            border: none;
-            font-size: 2rem;
-            cursor: pointer;
-            color: white;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
+        /* Botão hambúrguer + texto */
+        .menu-area {
             display: flex;
             align-items: center;
-            justify-content: center;
+            gap: 10px;
         }
 
-        .hamburger:hover {
+        .hamburger {
             background: rgba(255,255,255,0.2);
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
         }
 
-        /* OVERLAY */
+        .dashboard-text {
+            color: white;
+            font-weight: bold;
+        }
+
+        /* OVERLAY (fundo escuro) - cobre TUDO, inclusive o header */
         .overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 998;
+            background: rgba(0,0,0,0.7);
+            z-index: 200;
             display: none;
         }
 
@@ -65,7 +76,7 @@
             display: block;
         }
 
-        /* MENU LATERAL */
+        /* MENU LATERAL - com X para fechar */
         .side-menu {
             position: fixed;
             top: 0;
@@ -73,7 +84,7 @@
             width: 280px;
             height: 100%;
             background: #1a4a2a;
-            z-index: 999;
+            z-index: 201;
             transition: right 0.3s ease;
             padding: 20px;
         }
@@ -82,7 +93,7 @@
             right: 0;
         }
 
-        .side-menu .close {
+        .side-menu .close-x {
             background: none;
             border: none;
             font-size: 1.8rem;
@@ -95,7 +106,7 @@
             margin-top: 60px;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 15px;
         }
 
         .side-menu a {
@@ -103,27 +114,23 @@
             text-decoration: none;
             padding: 10px;
             display: block;
-            border-radius: 8px;
         }
 
         .side-menu a:hover {
             background: rgba(255,255,255,0.2);
         }
 
-        .logout-btn {
-            margin-top: 30px;
+        .logout {
             background: #d32f2f;
             text-align: center;
             border-radius: 8px;
-        }
-
-        .logout-btn:hover {
-            background: #b71c1c;
+            margin-top: 20px;
         }
 
         .content {
-            padding: 40px;
-            text-align: center;
+            padding: 20px;
+            height: 1500px;
+            background: #f0f0f0;
         }
     </style>
 </head>
@@ -131,53 +138,63 @@
 
 <header>
     <div class="logo">SOS LIXO</div>
-    <button class="hamburger" id="hamburgerBtn">🍔</button>
+    <div class="menu-area">
+        <button class="hamburger" id="hamburgerBtn">🍔</button>
+        <span class="dashboard-text">DASHBOARD</span>
+    </div>
 </header>
 
+<!-- OVERLAY (cobre tudo) -->
 <div class="overlay" id="overlay"></div>
 
+<!-- MENU LATERAL COM X -->
 <div class="side-menu" id="sideMenu">
-    <button class="close" id="closeBtn">✕</button>
+    <button class="close-x" id="closeXBtn">✕</button>
     <nav>
-        <a href="#">Início</a>
-        <a href="#">Mapa</a>
-        <a href="#">Relatórios</a>
-        <a href="#">Empresas</a>
-        <a href="#">Dashboard</a>
-        <a href="#">Ocorrências</a>
-        <a href="#" class="logout-btn" id="logoutBtn">🚪 Sair</a>
+        <a href="#">📋 Todas Ocorrências</a>
+        <a href="#">🏢 Concessionárias</a>
+        <a href="#">👥 Equipes Operacionais</a>
+        <a href="#">📈 Relatórios Gerenciais</a>
+        <a href="#">🗺️ Mapa de Calor</a>
+        <a href="#">⚙️ Configurações</a>
+        <a href="#">👤 Usuários</a>
+        <a href="#" class="logout">🚪 Sair do Sistema</a>
     </nav>
 </div>
 
 <div class="content">
-    <h1>Conteúdo Principal</h1>
-    <p>Clique no hambúrguer para abrir o menu lateral</p>
+    <h1>Conteúdo da Página</h1>
+    <p>Role para baixo e veja que o overlay cobre TUDO, inclusive o header fixo.</p>
+    <p>Clique no 🍔 para abrir o menu.</p>
+    <p>Clique no ✕ para fechar.</p>
+    <p>Clique fora do menu (fundo escuro) também fecha.</p>
 </div>
 
 <script>
     const hamburger = document.getElementById('hamburgerBtn');
     const sideMenu = document.getElementById('sideMenu');
     const overlay = document.getElementById('overlay');
-    const closeBtn = document.getElementById('closeBtn');
-    const logoutBtn = document.getElementById('logoutBtn');
+    const closeX = document.getElementById('closeXBtn');
 
     function openMenu() {
         sideMenu.classList.add('open');
         overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
     }
 
     function closeMenu() {
         sideMenu.classList.remove('open');
         overlay.classList.remove('active');
+        document.body.style.overflow = '';
     }
 
     hamburger.addEventListener('click', openMenu);
-    closeBtn.addEventListener('click', closeMenu);
+    closeX.addEventListener('click', closeMenu);
     overlay.addEventListener('click', closeMenu);
 
-    logoutBtn.addEventListener('click', function() {
-        alert('Logout executado! (aqui vai redirecionar para o login)');
-        // window.location.href = 'login.html';
+    // Fecha menu ao clicar em qualquer link
+    document.querySelectorAll('.side-menu a').forEach(link => {
+        link.addEventListener('click', closeMenu);
     });
 </script>
 

@@ -11,16 +11,14 @@
 <script>
     // Verifica se o usuário está logado como admin
     if (localStorage.getItem('admin_logado') !== 'true') {
-        window.location.href = 'login.html'; // redireciona para o login
+        window.location.href = 'login.html';
     }
     
-    // Função de logout
     function logout() {
         localStorage.removeItem('admin_logado');
         window.location.href = 'login.html';
     }
     
-    // Funções auxiliares (mantidas do seu original)
     function toggleModal(show) {
         const modal = document.getElementById('modalFormulario');
         if (show) {
@@ -31,7 +29,6 @@
     }
     
     function verificarFormatoAnexo(input) {
-        // Sua função original
         const file = input.files[0];
         if (file) {
             const allowedTypes = ['image/jpeg', 'image/png', 'video/mp4'];
@@ -51,14 +48,8 @@
     
     function salvarOcorrencia(event) {
         event.preventDefault();
-        // Sua função original
         alert('Ocorrência registada com sucesso!');
         toggleModal(false);
-    }
-    
-    function filtrarOcorrencias() {
-        // Sua função original
-        console.log('Filtrando ocorrências...');
     }
 </script>
 
@@ -73,10 +64,12 @@
                 </div>
             </div>
             
-            <!-- Botão Hambúrguer (substitui o nav) -->
-            <button class="hamburger-btn" id="hamburgerBtn">
-                <i class="fa-solid fa-bars"></i>
-            </button>
+            <div class="menu-wrapper" style="display: flex; align-items: center; gap: 12px;">
+                <button class="hamburger-btn" id="hamburgerBtn">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <span class="dashboard-text" style="color: white; font-weight: bold; font-size: 1rem;">DASHBOARD</span>
+            </div>
         </header>
 
         <div class="admin-alert-center" id="painelAlertas">
@@ -113,22 +106,22 @@
             </div>
             
             <div class="filter-controls-container">
-                <select id="filtroMunicipio" class="select-styled" onchange="filtrarOcorrencias()">
-                    <option value="todos">Mundicípio: Todos</option>
+                <select id="filtroMunicipio" class="select-styled" onchange="aplicarFiltros()">
+                    <option value="todos">Município: Todos</option>
                     <option value="Catete">Catete (Icolo e Bengo)</option>
                     <option value="Bom Jesus">Bom Jesus (Icolo e Bengo)</option>
                     <option value="Cazenga">Cazenga</option>
                     <option value="Viana">Viana</option>
                 </select>
 
-                <select id="filtroPrioridade" class="select-styled" onchange="filtrarOcorrencias()">
+                <select id="filtroPrioridade" class="select-styled" onchange="aplicarFiltros()">
                     <option value="todos">Prioridade: Todas</option>
                     <option value="alta">Alta</option>
                     <option value="media">Média</option>
                     <option value="baixa">Baixa</option>
                 </select>
 
-                <select id="filtroCategoria" class="select-styled" onchange="filtrarOcorrencias()">
+                <select id="filtroCategoria" class="select-styled" onchange="aplicarFiltros()">
                     <option value="todos">Resíduo: Todos</option>
                     <option value="Lixo Doméstico">Lixo Doméstico</option>
                     <option value="Entulho de Obras">Entulho de Obras</option>
@@ -143,7 +136,6 @@
         </section>
 
         <section class="cards-container" id="containerCardsOcorrencias">
-            <!-- Os cards de ocorrências serão carregados dinamicamente aqui -->
         </section>
     </div>
 
@@ -155,7 +147,6 @@
             </div>
             <form id="formReporte" onsubmit="salvarOcorrencia(event)">
                 <div class="modal-body">
-                    
                     <div class="form-row">
                         <div class="form-group">
                             <label for="nomeUsuario">Nome do Cidadão *</label>
@@ -265,97 +256,56 @@
         </div>
     </footer>
 
-    <!-- ========== MENU HAMBÚRGUER (SUBSTITUI O NAV) ========== -->
-    <!-- Overlay para fechar ao clicar fora -->
+    <!-- MENU HAMBÚRGUER -->
     <div class="menu-overlay" id="menuOverlay"></div>
     
-    <!-- Menu lateral -->
     <div class="side-menu" id="sideMenu">
-        <div class="side-menu-header">
-            <button class="close-menu" id="closeMenuBtn">
+        <div style="display: flex; justify-content: flex-end; padding: 20px;">
+            <button id="closeMenuBtn" style="background: none; border: none; font-size: 1.8rem; cursor: pointer; color: white;">
                 <i class="fa-solid fa-xmark"></i>
             </button>
         </div>
- <div class="side-menu-nav">
-    <!-- BOTÃO X PARA FECHAR O MENU -->
-    <div style="display: flex; justify-content: flex-end; padding: 10px;">
-        <button id="closeMenuBtn" style="background: none; border: none; font-size: 1.8rem; cursor: pointer; color: white;">
-            <i class="fa-solid fa-xmark"></i>
-        </button>
-    </div>
-    
-    <a href="ocorrencias.html">
-        <i class="fa-solid fa-trash"></i> Todas Ocorrências
-    </a>
-    <a href="empresas-concessionarias.html">
-        <i class="fa-solid fa-building"></i> Concessionárias
-    </a>
-    <a href="equipes-operacionais.html">
-        <i class="fa-solid fa-people-group"></i> Equipes Operacionais
-    </a>
-    <a href="relatorios.html">
-        <i class="fa-solid fa-chart-line"></i> Relatórios Gerenciais
-    </a>
-    <a href="mapa-calor.html">
-        <i class="fa-solid fa-map"></i> Mapa de Calor
-    </a>
-    <a href="configuracoes.html">
-        <i class="fa-solid fa-gear"></i> Configurações
-    </a>
-    <a href="gestao-usuarios.html">
-        <i class="fa-solid fa-users"></i> Usuários
-    </a>
-    
-    <div class="menu-divider"></div>
-    
-    <!-- LOGOUT -->
-    <div class="logout-menu-btn" onclick="logout()">
-        <i class="fa-solid fa-power-off"></i> Sair do Sistema
-    </div>
-</div>
+        <div class="side-menu-nav">
+            <a href="ocorrencias.html"><i class="fa-solid fa-trash"></i> Todas Ocorrências</a>
+            <a href="empresas-concessionarias.html"><i class="fa-solid fa-building"></i> Concessionárias</a>
+            <a href="equipes-operacionais.html"><i class="fa-solid fa-people-group"></i> Equipes Operacionais</a>
+            <a href="relatorios.html"><i class="fa-solid fa-chart-line"></i> Relatórios Gerenciais</a>
+            <a href="mapa-calor.html"><i class="fa-solid fa-map"></i> Mapa de Calor</a>
+            <a href="configuracoes.html"><i class="fa-solid fa-gear"></i> Configurações</a>
+            <a href="gestao-usuarios.html"><i class="fa-solid fa-users"></i> Usuários</a>
+            <div class="menu-divider"></div>
+            <div class="logout-menu-btn" onclick="logout()"><i class="fa-solid fa-power-off"></i> Sair do Sistema</div>
+        </div>
     </div>
 
-    <script src="./js/main.js"></script>
-    
-    <!-- ========== SCRIPT DO MENU HAMBÚRGUER ========== -->
     <script>
-        // Funções do menu hambúrguer
-        (function() {
-            const hamburgerBtn = document.getElementById('hamburgerBtn');
-            const sideMenu = document.getElementById('sideMenu');
-            const menuOverlay = document.getElementById('menuOverlay');
-            const closeMenuBtn = document.getElementById('closeMenuBtn');
-            
-            function openMenu() {
-                sideMenu.classList.add('open');
-                menuOverlay.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            }
-            
-            function closeMenu() {
-                sideMenu.classList.remove('open');
-                menuOverlay.classList.remove('active');
-                document.body.style.overflow = '';
-            }
-            
-            if (hamburgerBtn) {
-                hamburgerBtn.addEventListener('click', openMenu);
-            }
-            
-            if (closeMenuBtn) {
-                closeMenuBtn.addEventListener('click', closeMenu);
-            }
-            
-            if (menuOverlay) {
-                menuOverlay.addEventListener('click', closeMenu);
-            }
-            
-            // Fechar menu ao clicar em qualquer link
-            const allLinks = document.querySelectorAll('.side-menu-nav a');
-            allLinks.forEach(link => {
-                link.addEventListener('click', closeMenu);
-            });
-        })();
+        const hamburgerBtn = document.getElementById('hamburgerBtn');
+        const sideMenu = document.getElementById('sideMenu');
+        const menuOverlay = document.getElementById('menuOverlay');
+        const closeMenuBtn = document.getElementById('closeMenuBtn');
+        
+        function openMenu() {
+            sideMenu.classList.add('open');
+            menuOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeMenu() {
+            sideMenu.classList.remove('open');
+            menuOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        
+        hamburgerBtn.addEventListener('click', openMenu);
+        closeMenuBtn.addEventListener('click', closeMenu);
+        menuOverlay.addEventListener('click', closeMenu);
+        
+        document.querySelectorAll('.side-menu-nav a').forEach(link => {
+            link.addEventListener('click', closeMenu);
+        });
     </script>
+
+    <script src="./js/main.js"></script>
+     
 </body>
 </html>

@@ -1,7 +1,7 @@
 // ==================== CONFIGURAÇÃO DA API LOCAL ====================
 const API_URL = 'http://localhost:3000/api/ocorrencias';
 
-// ==================== MODAL DE REPORTE (INDEX.HTML) ====================
+// ==================== MODAL DE REPORTE ====================
 function toggleModal(open) {
     const modal = document.getElementById('modalFormulario');
     if (!modal) return;
@@ -27,30 +27,32 @@ function buildMapLink(latitude, longitude) {
     return `https://www.google.com/maps?q=${encodeURIComponent(latitude + ',' + longitude)}`;
 }
 
-document.getElementById('btnCapturarGPS')?.addEventListener('click', () => {
-    const geoStatus = document.getElementById('geoStatus');
-    if (!geoStatus) return;
-    geoStatus.innerHTML = "A solicitar autorização de GPS...";
-    
-    if (!navigator.geolocation) {
-        geoStatus.innerHTML = "<span style='color:var(--danger);'><i class='fa-solid fa-circle-xmark'></i> GPS não suportado.</span>";
-        return;
-    }
+if (document.getElementById('btnCapturarGPS')) {
+    document.getElementById('btnCapturarGPS').addEventListener('click', () => {
+        const geoStatus = document.getElementById('geoStatus');
+        if (!geoStatus) return;
+        geoStatus.innerHTML = "A solicitar autorização de GPS...";
+        
+        if (!navigator.geolocation) {
+            geoStatus.innerHTML = "<span style='color:var(--danger);'><i class='fa-solid fa-circle-xmark'></i> GPS não suportado.</span>";
+            return;
+        }
 
-    navigator.geolocation.getCurrentPosition(
-        (position) => {
-            const lat = position.coords.latitude.toFixed(6);
-            const lng = position.coords.longitude.toFixed(6);
-            const mapLinkInput = document.getElementById('googleMapsLink');
-            if (mapLinkInput) mapLinkInput.value = `https://maps.google.com/?q=${lat},${lng}`;
-            geoStatus.innerHTML = `<span style='color:var(--success);'><i class='fa-solid fa-circle-check'></i> Localização capturada!</span>`;
-        },
-        (error) => {
-            geoStatus.innerHTML = "<span style='color:var(--warning);'><i class='fa-solid fa-triangle-exclamation'></i> Erro ao obter GPS.</span>";
-        },
-        { enableHighAccuracy: true, timeout: 10000 }
-    );
-});
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const lat = position.coords.latitude.toFixed(6);
+                const lng = position.coords.longitude.toFixed(6);
+                const mapLinkInput = document.getElementById('googleMapsLink');
+                if (mapLinkInput) mapLinkInput.value = `https://maps.google.com/?q=${lat},${lng}`;
+                geoStatus.innerHTML = `<span style='color:var(--success);'><i class='fa-solid fa-circle-check'></i> Localização capturada!</span>`;
+            },
+            (error) => {
+                geoStatus.innerHTML = "<span style='color:var(--warning);'><i class='fa-solid fa-triangle-exclamation'></i> Erro ao obter GPS.</span>";
+            },
+            { enableHighAccuracy: true, timeout: 10000 }
+        );
+    });
+}
 
 // ==================== SUBMISSÃO DO CIDADÃO PARA A API (POST) ====================
 async function salvarOcorrencia(event) {
@@ -60,6 +62,12 @@ async function salvarOcorrencia(event) {
     const imagemLocalInput = document.getElementById('imagemLocal');
     const mapLinkValue = document.getElementById('googleMapsLink')?.value;
     const prioridade = document.getElementById('prioridade')?.value || 'media';
+    
+    const municipio = document.getElementById('municipio')?.value || '';
+    const categoria = document.getElementById('categoria')?.value || '';
+    const bairro = document.getElementById('bairro')?.value || '';
+    const nomeUsuario = document.getElementById('nomeUsuario')?.value || '';
+    const telefoneUsuario = document.getElementById('telefoneUsuario')?.value || '';
     
     let latitude = "-8.8368"; 
     let longitude = "13.2343";
@@ -75,7 +83,12 @@ async function salvarOcorrencia(event) {
     formData.append('descricao', descricao);
     formData.append('latitude', latitude);
     formData.append('longitude', longitude);
-    formData.append('prioridade', prioridade); 
+    formData.append('prioridade', prioridade);
+    formData.append('municipio', municipio);
+    formData.append('categoria', categoria);
+    formData.append('bairro', bairro);
+    formData.append('nomeUsuario', nomeUsuario);
+    formData.append('telefoneUsuario', telefoneUsuario);
 
     if (imagemLocalInput && imagemLocalInput.files.length > 0) {
         formData.append('midia', imagemLocalInput.files[0]);
@@ -120,7 +133,7 @@ async function salvarOcorrencia(event) {
     }
 }
 
-// ==================== LEITURA E RENDERIZAÇÃO REAL DO REPORTADM ====================
+// ==================== LEITURA E RENDERIZAÇÃO REAL ====================
 async function atualizarPainelGeral() {
     const container = document.getElementById('containerCardsOcorrencias');
     if (!container) return;
@@ -129,9 +142,8 @@ async function atualizarPainelGeral() {
         const resposta = await fetch(API_URL);
         const ocorrenciasAPI = await resposta.json();
 
-        // Armazena no escopo global para uso nos filtros
+        console.log("Dados carregados:", ocorrenciasAPI);
         window.todasOcorrencias = ocorrenciasAPI;
-
         renderizarCardsPainel(ocorrenciasAPI);
         atualizarContadoresPainel(ocorrenciasAPI);
 
@@ -141,7 +153,6 @@ async function atualizarPainelGeral() {
     }
 }
 
-// INJEÇÃO QUE REPRODUZ 100% O DESIGN ORIGINAL DOS TEUS COLEGAS
 function renderizarCardsPainel(lista) {
     const container = document.getElementById('containerCardsOcorrencias');
     if (!container) return;
@@ -154,14 +165,11 @@ function renderizarCardsPainel(lista) {
 
     lista.forEach(item => {
         const card = document.createElement('div');
-        // Mantém a classe dinâmica original que muda a cor da borda esquerda baseado no status
-        card.className = `mockup-card card-${item.status.replace(/\s+/g, '').toLowerCase()}`;
+        card.className = `mockup-card card-${item.status ? item.status.replace(/\s+/g, '').toLowerCase() : 'pendente'}`;
         
-        // Define a label e a classe CSS correta para a prioridade (Alta, Media, Baixa)
         const prioridadeFixa = item.prioridade || 'media';
         const labelPrioridade = prioridadeFixa.charAt(0).toUpperCase() + prioridadeFixa.slice(1);
 
-        // Renderização de mídia inteligente (Vídeo ou Imagem vinda do Firebase Storage)
         let midiaHTML = "";
         if (item.url_foto) {
             if (item.url_foto.includes('.mp4') || item.url_foto.includes('.mov')) {
@@ -171,17 +179,26 @@ function renderizarCardsPainel(lista) {
             }
         }
 
-        // MONTAGEM DO HTML IDENTICO AO ORIGINAL (ANTES DO BUG)
+        const mapsLink = `https://www.google.com/maps?q=${item.latitude},${item.longitude}`;
+        const municipioInfo = item.municipio ? `<span><i class="fa-solid fa-city"></i> ${item.municipio}</span>` : '';
+        const categoriaInfo = item.categoria ? `<span><i class="fa-solid fa-trash"></i> ${item.categoria}</span>` : '';
+
         card.innerHTML = `
             <div class="card-header">
-                <span class="status-badge status-${item.status.replace(/\s+/g, '').toLowerCase()}">${item.status}</span>
+                <span class="status-badge status-${item.status ? item.status.replace(/\s+/g, '').toLowerCase() : 'pendente'}">${item.status || 'Pendente'}</span>
                 <span class="priority-badge prio-${prioridadeFixa}">${labelPrioridade}</span>
             </div>
             
-            <p class="card-desc">${item.descricao}</p>
+            <p class="card-desc">${item.descricao || 'Sem descrição'}</p>
             
             <div class="card-meta">
-                <span><i class="fa-solid fa-location-dot"></i> Lat: ${item.latitude} | Lng: ${item.longitude}</span>
+                ${municipioInfo}
+                ${categoriaInfo}
+                <span><i class="fa-solid fa-location-dot"></i> 
+                    <a href="${mapsLink}" target="_blank" style="color: #1976D2; text-decoration: none;">
+                        Ver no Mapa
+                    </a>
+                </span>
                 <span><i class="fa-solid fa-calendar-days"></i> ${item.data_criacao ? new Date(item.data_criacao).toLocaleDateString('pt-AO') : 'Recente'}</span>
             </div>
 
@@ -211,31 +228,51 @@ function renderizarCardsPainel(lista) {
     });
 }
 
-// ==================== CONTADORES ORIGINAIS DO TOPO ====================
 function atualizarContadoresPainel(lista) {
-    const countPendentes = document.getElementById('countPendentes');
-    const countAndamento = document.getElementById('countAndamento');
-    const countResolvidos = document.getElementById('countResolvidos');
-    const countTotal = document.getElementById('countTotal');
+    const totalPontos = document.getElementById('totalPontos');
+    const taxaResolucao = document.getElementById('taxaResolucao');
 
-    if (countPendentes) countPendentes.innerText = lista.filter(o => o.status === 'Pendente').length;
-    if (countAndamento) countAndamento.innerText = lista.filter(o => o.status === 'Em Andamento').length;
-    if (countResolvidos) countResolvidos.innerText = lista.filter(o => o.status === 'Resolvido').length;
-    if (countTotal) countTotal.innerText = lista.length;
+    if (totalPontos) totalPontos.innerText = lista.length + " Pontos";
+    if (taxaResolucao) {
+        const resolvidos = lista.filter(o => o.status === 'Resolvido').length;
+        const percentual = lista.length > 0 ? Math.round((resolvidos / lista.length) * 100) : 0;
+        taxaResolucao.innerText = percentual + "%";
+    }
 }
 
-// ==================== FILTROS DE STATUS ORIGINAIS ====================
-function filtrarOcorrencias(statusFiltro) {
-    if (!window.todasOcorrencias) return;
-
-    // Atualiza a classe ativa nos botões originais
-    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-    if (event && event.target) event.target.classList.add('active');
-
-    if (statusFiltro === 'todos') {
-        renderizarCardsPainel(window.todasOcorrencias);
+// ==================== FUNÇÃO DE FILTROS COMBINADOS ====================
+function aplicarFiltros() {
+    if (!window.todasOcorrencias) {
+        console.log("Nenhuma ocorrência carregada");
+        return;
+    }
+    
+    const municipio = document.getElementById('filtroMunicipio')?.value || 'todos';
+    const prioridade = document.getElementById('filtroPrioridade')?.value || 'todos';
+    const categoria = document.getElementById('filtroCategoria')?.value || 'todos';
+    
+    console.log("Filtrando por:", { municipio, prioridade, categoria });
+    
+    let filtradas = [...window.todasOcorrencias];
+    
+    if (municipio !== 'todos') {
+        filtradas = filtradas.filter(o => o.municipio === municipio);
+    }
+    if (prioridade !== 'todos') {
+        filtradas = filtradas.filter(o => o.prioridade === prioridade);
+    }
+    if (categoria !== 'todos') {
+        filtradas = filtradas.filter(o => o.categoria === categoria);
+    }
+    
+    console.log(`Filtrou de ${window.todasOcorrencias.length} para ${filtradas.length} ocorrências`);
+    
+    if (filtradas.length === 0) {
+        const container = document.getElementById('containerCardsOcorrencias');
+        if (container) {
+            container.innerHTML = "<p style='padding: 20px; text-align:center;'>Nenhuma ocorrência encontrada com os filtros selecionados.</p>";
+        }
     } else {
-        const filtradas = window.todasOcorrencias.filter(o => o.status.toLowerCase() === statusFiltro.toLowerCase());
         renderizarCardsPainel(filtradas);
     }
 }
@@ -266,7 +303,6 @@ async function mudarEquipaElemento(id) {
     const novaEquipa = select ? select.value : '';
 
     try {
-        // Envia a brigada selecionada para salvar direto no documento do Firestore
         const resposta = await fetch(`${API_URL}/${id}`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
@@ -282,12 +318,13 @@ async function mudarEquipaElemento(id) {
     }
 }
 
-// ==================== LOGOUT E INICIALIZAÇÃO ====================
+// ==================== LOGOUT ====================
 function logout() {
     localStorage.removeItem('admin_logado');
     window.location.href = 'login.html';
 }
 
+// ==================== INICIALIZAÇÃO PRINCIPAL ====================
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('formReporte');
     if (form) form.addEventListener('submit', salvarOcorrencia);
@@ -297,90 +334,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// Vinculação global para os cliques do HTML funcionarem perfeitamente
+// ==================== EXPORTAÇÃO GLOBAL ====================
 window.abrirReporte = abrirReporte;
 window.toggleModal = toggleModal;
-window.filtrarOcorrencias = filtrarOcorrencias;
+window.aplicarFiltros = aplicarFiltros;
 window.avancarStatusElemento = avancarStatusElemento;
 window.mudarEquipaElemento = mudarEquipaElemento;
 window.logout = logout;
-
-
-
-
-// ==================== NOVAS FUNCIONALIDADES (SEM CONFLITO) ====================
-// 1. SIDEBAR MOBILE
-document.addEventListener('DOMContentLoaded', () => {
-    const sidebarEl = document.getElementById('sidebar');
-    const overlay = document.getElementById('sidebarOverlay');
-    const toggleBtn = document.getElementById('sidebarToggleBtn');
-    const closeBtn = document.getElementById('sidebarCloseBtn');
-
-    if (sidebarEl && toggleBtn && closeBtn && overlay) {
-        function openSidebar() {
-            sidebarEl.classList.add('open');
-            overlay.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-        function closeSidebar() {
-            sidebarEl.classList.remove('open');
-            overlay.classList.remove('active');
-            document.body.style.overflow = '';
-        }
-        toggleBtn.addEventListener('click', openSidebar);
-        closeBtn.addEventListener('click', closeSidebar);
-        overlay.addEventListener('click', closeSidebar);
-    }
-});
-
-// 2. CARROSSEL DE EMPRESAS (usando Swiper)
-if (document.querySelector('.empresas-swiper') && typeof Swiper !== 'undefined') {
-    new Swiper('.empresas-swiper', {
-        loop: true,
-        autoplay: { delay: 3000, disableOnInteraction: false }, // automático
-        slidesPerView: 1,
-        spaceBetween: 20,
-        pagination: { el: '.swiper-pagination', clickable: true },
-        navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
-        breakpoints: {
-            640: { slidesPerView: 2 },
-            1024: { slidesPerView: 3 }
-        }
-    });
-}
-
-// 3. MAPA INTERATIVO (página mapa.html)
-if (document.getElementById('mapaLeaflet') && typeof L !== 'undefined') {
-    let map = L.map('mapaLeaflet').setView([-8.8383, 13.2344], 12);
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> & CartoDB'
-    }).addTo(map);
-
-    // Dados de exemplo (pode vir da sua API depois)
-    const ocorrenciasMapa = [
-        { lat: -8.8383, lng: 13.2344, titulo: 'Lixo no Cazenga', prioridade: 'alta', descricao: 'Acúmulo de lixo doméstico.' },
-        { lat: -8.8283, lng: 13.2444, titulo: 'Entulho na Av. 21 Janeiro', prioridade: 'media', descricao: 'Restos de construção.' },
-        { lat: -8.8483, lng: 13.2244, titulo: 'Viana - Zango', prioridade: 'baixa', descricao: 'Ponto de lixo inicial.' }
-    ];
-
-    function adicionarMarcadores(filtroPrioridade = 'todas') {
-        map.eachLayer(layer => {
-            if (layer instanceof L.Marker) map.removeLayer(layer);
-        });
-        ocorrenciasMapa.forEach(occ => {
-            if (filtroPrioridade !== 'todas' && occ.prioridade !== filtroPrioridade) return;
-            L.marker([occ.lat, occ.lng])
-                .bindPopup(`<b>${occ.titulo}</b><br>Prioridade: ${occ.prioridade}<br>${occ.descricao}`)
-                .addTo(map);
-        });
-    }
-    adicionarMarcadores();
-
-    const btnAtualizar = document.getElementById('btnAtualizarMapa');
-    if (btnAtualizar) {
-        btnAtualizar.addEventListener('click', () => {
-            const prioridade = document.getElementById('filtroPrioridade')?.value || 'todas';
-            adicionarMarcadores(prioridade);
-        });
-    }
-}
